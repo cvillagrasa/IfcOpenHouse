@@ -5,4 +5,4 @@ d = { 'settings': { 'branch': 'master',
                 'doc_host': 'https://cvillagrasa.github.io',
                 'git_url': 'https://github.com/cvillagrasa/IfcOpenHouse',
                 'lib_path': 'IfcOpenHouse'},
-  'syms': {'IfcOpenHouse.core': {'IfcOpenHouse.core.foo': ('core.html#foo', 'IfcOpenHouse/core.py')}}}
+  'syms': {'IfcOpenHouse.core': {}, 'IfcOpenHouse.ios_utils': {}, 'IfcOpenHouse.opening_data': {}}}

@@ -2,7 +2,7 @@ project:
   output-dir: _docs
 
 website:
-  title: "IfcOpenHouse"
+  title: "ifcopenhouse"
   site-url: "https://cvillagrasa.github.io/IfcOpenHouse"
   description: "Recreation of the original IfcOpenHouse with the IfcOpenShell Python API"
   repo-branch: master
