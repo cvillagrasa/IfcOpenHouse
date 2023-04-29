@@ -5,6 +5,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      uses: fastai/workflows/nbdev-ci@master
-      with:
-        python-version: '3.11'
+      - uses: fastai/workflows/nbdev-ci@master
+        with:
+          python-version: '3.11'
