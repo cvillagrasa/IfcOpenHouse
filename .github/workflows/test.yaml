@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: fastai/workflows/nbdev-ci@master
         with:
-          python-version: '3.11'
+          version: '3.11'
