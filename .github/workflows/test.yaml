@@ -5,6 +5,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: test
+          python-version: 3.11
+          miniforge-variant: Mambaforge
+      - name: install conda_requirements
+        run: |
+          mamba install numpy>=1.24
+          mamba install -c conda-forge nptyping=2.5.0
+          mamba install -c ifcopenshell ifcopenshell=0.7.0
+          mamba install -c conda-forge pythonocc-core>=7.7.0
+          mamba install -c conda-forge jupyterthemes=0.20.0
       - uses: fastai/workflows/nbdev-ci@master
         with:
           version: '3.11'
