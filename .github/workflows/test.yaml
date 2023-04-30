@@ -5,18 +5,45 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: conda-incubator/setup-miniconda@v2
         with:
-          activate-environment: base
           python-version: 3.11
           miniforge-variant: Mambaforge
-      - name: install conda_requirements
+      - name: Install requirements and test nbdev
         run: |
+          set -ux
+          mamba install pip
+          python -m pip install --upgrade pip
           mamba install numpy>=1.24
           mamba install -c conda-forge nptyping=2.5.0
           mamba install -c ifcopenshell ifcopenshell=0.7.0
           mamba install -c conda-forge pythonocc-core>=7.7.0
           mamba install -c conda-forge jupyterthemes=0.20.0
-      - uses: fastai/workflows/nbdev-ci@master
-        with:
-          version: '3.11'
+          pip install mathutils>=3.3.0
+          pip install -U nbdev
+
+          echo "Check we are starting with clean git checkout"
+          if [[ `git status --porcelain -uno` ]]; then
+            git diff
+            echo "git status is not clean"
+            false
+          fi
+          echo "Trying to strip out notebooks"
+          nbdev_clean
+          echo "Check that strip out was unnecessary"
+          git status -s # display the status to see which nbs need cleaning up
+          if [[ `git status --porcelain -uno` ]]; then
+            git status -uno
+            echo -e "!!! Detected unstripped out notebooks\n!!!Remember to run nbdev_install_hooks"
+            echo -e "This error can also happen if you are using an older version of nbdev relative to what is in CI.  Please try to upgrade nbdev with the command `pip install -U nbdev`"
+            false
+          fi
+          nbdev_export
+          if [[ `git status --porcelain -uno` ]]; then
+            echo "::error::Notebooks and library are not in sync.  Please run nbdev_export."
+            git status -uno
+            git diff
+            exit 1;
+          fi
+          nbdev_test
