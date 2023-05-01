@@ -11,4 +11,36 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps: [uses: fastai/workflows/quarto-ghp@master]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.11
+          miniforge-variant: Mambaforge
+      - name: Install requirements and test nbdev
+        run: |
+          set -ux
+          mamba install pip
+          python -m pip install --upgrade pip
+          mamba install numpy>=1.24
+          mamba install -c conda-forge nptyping=2.5.0
+          mamba install -c ifcopenshell ifcopenshell=0.7.0
+          mamba install -c conda-forge pythonocc-core>=7.7.0
+          mamba install -c conda-forge jupyterthemes=0.20.0
+          pip install mathutils>=3.3.0
+          pip install -U nbdev
+          nbdev_docs
+      - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ github.token }}
+        force_orphan: true
+        publish_dir: ./_docs
+        # The following lines assign commit authorship to the official GH-Actions bot for deploys to `gh-pages` branch.
+        # You can swap them out with your own user credentials.
+        user_name: github-actions[bot]
+        user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          
