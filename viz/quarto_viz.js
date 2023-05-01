@@ -6,9 +6,9 @@ async function loadIfc() {
   const titleHeader = document.getElementById("title-block-header");
 
   const container = document.createElement("div");
+  container.setAttribute("id", "ifcjs-container");
   titleHeader.after(container);
-  //container.style.width = "1200px";
-  //container.style.height = "600px";
+  container.style.height = "16vh";
 
   const ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
   const viewer = new IfcViewerAPI({
