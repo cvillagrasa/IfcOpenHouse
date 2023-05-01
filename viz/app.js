@@ -12,7 +12,7 @@ async function loadIfc(ifcUrl, ifcStr) {
   container.style.height = "600px";
 
   if (ifcUrl === undefined) {
-    ifcUrl = "http://127.0.0.1:8080/ifc/IfcOpenHouse.ifc";
+    ifcUrl = "https://github.com/cvillagrasa/IfcOpenHouse/raw/master/ifc/IfcOpenHouse.ifc";
   }
 
   if (model === null) {
@@ -20,7 +20,6 @@ async function loadIfc(ifcUrl, ifcStr) {
       container,
       backgroundColor: new Color(0xa3adc9),
     });
-    await viewer.IFC.setWasmPath("./node_modules/web-ifc/");
     viewer.axes.setAxes();
   } else {
     await viewer.IFC.removeIfcModel(model.modelID);
