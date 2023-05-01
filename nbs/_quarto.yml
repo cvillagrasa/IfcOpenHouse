@@ -3,9 +3,11 @@ project:
 
 format:
   html:
-    theme: cosmo
+    theme: quartz
     css: styles.css
     toc: true
+    grid:
+      body-width: 50vw
 
 website:
   twitter-card: true
