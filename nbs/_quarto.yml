@@ -6,8 +6,10 @@ format:
     theme: quartz
     css: styles.css
     toc: true
-    grid:
-      body-width: 50vw
+    page-layout: article
+    smooth-scroll: true
+    link-external-icon: true
+    link-external-newwindow: true
 
 website:
   twitter-card: true
