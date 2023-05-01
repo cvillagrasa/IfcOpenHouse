@@ -10,6 +10,11 @@ includes a footing, walls with openings for doors and windows, a roof…
 but above all, it gives an overview about how to programmatically build
 a simple IFC model from scratch.
 
+<!-- This is where a canvas with an IFC.js visualisation of the model
+    will be placed within the Quarto website -->
+<div id="ifcjs-container">
+</div>
+
 Check out the original blog post, as well as the C++ source if
 interested:
 
@@ -46,24 +51,37 @@ These set of notebooks may be conveniently browsed through their Quarto
 website, or alternatively be run on your own end by cloning the
 repository. For the latter, follow these installation instructions.
 
-The repository contains a Python package. Hence, after cloning it, you
-may run the following command to install all dependencies.
+You may run the following command to clone the repository and install
+all necessary dependencies.
+
+TODO: Integrate with `nbdev` actions and settings.ini for easier
+installation.
 
 ``` sh
+mamba create --name IfcOpenHouse
+conda activate IfcOpenHouse
+git clone https://github.com/cvillagrasa/IfcOpenHouse.git
+mamba install numpy>=1.24
+mamba install -c conda-forge nptyping=2.5.0
+mamba install -c ifcopenshell ifcopenshell=0.7.0
+mamba install -c conda-forge pythonocc-core>=7.7.0
+pip install mathutils>=3.3.0
+pip install -U nbdev
 pip install -e .
 ```
 
 Using the editable flag `-e`, you will be able to use any further
-changes you make to the package immediately.
+changes you make to the notebooks and/or Python modules immediately.
 
-Use dark mode if you wish (see
+As an extra step, use dark mode if you wish (see
 [jupyter-themes](https://github.com/dunovank/jupyter-themes#user-content-command-line-examples)
 for more info):
 
 ``` sh
+mamba install -c conda-forge jupyterthemes=0.20.0
 jt -t chesterish -T -N -kl
 ```
 
 You may also want to edit the JavaScript code for the model preview by
-running `npm i` from the `viz` directory and regenerate the bundle with
-either `npm run build` or `npm run watch`.
+running `npm i` from the `viz` directory and regenerate the bundles with
+either `npm run build_nb` or `npm run watch_nb`.

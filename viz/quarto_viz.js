@@ -3,11 +3,7 @@ import { IfcViewerAPI } from "web-ifc-viewer";
 
 
 async function loadIfc() {
-  const titleHeader = document.getElementById("title-block-header");
-
-  const container = document.createElement("div");
-  container.setAttribute("id", "ifcjs-container");
-  titleHeader.after(container);
+  const container = document.getElementById("ifcjs-container");
   container.style.height = "25vh";
 
   const ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
