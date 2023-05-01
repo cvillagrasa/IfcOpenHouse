@@ -10,7 +10,7 @@ async function loadIfc() {
   //container.style.width = "1200px";
   //container.style.height = "600px";
 
-  const ifcUrl = "https://github.com/cvillagrasa/IfcOpenHouse/raw/master/ifc/IfcOpenHouse.ifc";
+  const ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse/ifc/IfcOpenHouse.ifc";
   const viewer = new IfcViewerAPI({
       container,
       backgroundColor: new Color(0xa3adc9),
