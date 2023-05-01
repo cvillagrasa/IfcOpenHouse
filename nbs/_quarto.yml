@@ -12,6 +12,7 @@ format:
     link-external-newwindow: true
     code-block-bg: "#aec7d4"
     code-block-border-left: false
+    include-after-body: "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse/viz/bundle_quarto_viz.js"
 
 website:
   twitter-card: true

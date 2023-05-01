@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup -c rollup.config.mjs",
-    "watch": "rollup -w -c rollup.config.mjs"
+    "watch": "rollup -w -c rollup.config.mjs",
+    "build_quarto": "rollup -c rollup_quarto_viz.config.mjs",
+    "watch_quarto": "rollup -w -c rollup_quarto_viz.config.mjs"
   },
   "author": "",
   "license": "ISC",
