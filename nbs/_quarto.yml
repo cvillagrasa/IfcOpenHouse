@@ -10,6 +10,8 @@ format:
     smooth-scroll: true
     link-external-icon: true
     link-external-newwindow: true
+    code-block-bg: "#aec7d4"
+    code-block-border-left: false
 
 website:
   twitter-card: true

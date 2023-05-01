@@ -4,7 +4,6 @@
 
 .cell > .sourceCode {
   margin-bottom: 0;
-  background-color: thistle;
 }
 
 .cell-output > pre {
@@ -35,4 +34,12 @@ div.description {
   font-style: italic;
   font-size: 135%;
   opacity: 70%;
+}
+
+code {
+  color: #56007f;
+}
+
+p code:not(.sourceCode) {
+  background-color: #9d9fbe;
 }
