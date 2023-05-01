@@ -34,13 +34,13 @@ jobs:
           pip install -U nbdev
           nbdev_docs
       - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ github.token }}
-        force_orphan: true
-        publish_dir: ./_docs
-        # The following lines assign commit authorship to the official GH-Actions bot for deploys to `gh-pages` branch.
-        # You can swap them out with your own user credentials.
-        user_name: github-actions[bot]
-        user_email: 41898282+github-actions[bot]@users.noreply.github.com
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ github.token }}
+          force_orphan: true
+          publish_dir: ./_docs
+          # The following lines assign commit authorship to the official GH-Actions bot for deploys to `gh-pages` branch.
+          # You can swap them out with your own user credentials.
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
           
