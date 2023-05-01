@@ -32,6 +32,7 @@ jobs:
           mamba install -c conda-forge jupyterthemes=0.20.0
           pip install mathutils>=3.3.0
           pip install -U nbdev
+          pip install -e '.[dev]'
           nbdev_docs
       - uses: peaceiris/actions-gh-pages@v3
         with:
