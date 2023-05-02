@@ -14,8 +14,13 @@ async function loadIfc() {
   viewer.axes.setAxes();
   const model = await viewer.IFC.loadIfcUrl(ifcUrl);
   await viewer.shadowDropper.renderShadow(model.modelID);
-  window.ondblclick = () => viewer.IFC.selector.pickIfcItem(true);
   window.onmousemove = () => viewer.IFC.selector.prePickIfcItem();
+  window.ondblclick = async () => {
+    const {modelID, stepId} = await viewer.IFC.selector.pickIfcItem(true);
+    const ifcType = model.getIfcType(stepId);
+    console.log(`#${stepId} ${ifcType}`);
+  }
+
   viewer.clipper.active = true;
 
   // Useful to play in the browser / debugging
