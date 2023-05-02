@@ -21,7 +21,7 @@ __all__ = ['project_name', 'author_details', 'author_role', 'organization_detail
            'window_right_representation', 'window_west', 'window_west_representation', 'window_left',
            'window_left_representation', 'window_style', 'json_logger', 'ifc_path']
 
-# %% ../nbs/00_generation.ipynb 8
+# %% ../nbs/00_generation.ipynb 9
 import sys
 from pathlib import Path
 from collections import defaultdict
@@ -40,7 +40,7 @@ from IfcOpenHouse.ios_utils import (
     ios_entity_overwrite_hook
 )
 
-# %% ../nbs/00_generation.ipynb 11
+# %% ../nbs/00_generation.ipynb 12
 # Data definition
 project_name = 'IFC Open House'
 author_details = {'given_name': 'Carlos', 'family_name': 'V', 'identification': 'CV'}
@@ -90,7 +90,7 @@ terrain_build_method = TerrainBuildMethod.TESSELATE_OCC_SHAPE
 from .opening_data import door_params, single_window_params, triple_window_params
 
 
-# %% ../nbs/00_generation.ipynb 14
+# %% ../nbs/00_generation.ipynb 15
 # Little trickery to ease the use of the ifcopenshell.api when scripting
 ios = IfcOpenShellPythonAPI()  #q1: thoughts about a data-scientish "import ifcopenshell.api as ios"?
 
@@ -121,7 +121,7 @@ sys.addaudithook(
     ios_entity_overwrite_hook(file, sys.modules[__name__], do_not_delete=[project, ctx, body])
 )
 
-# %% ../nbs/00_generation.ipynb 18
+# %% ../nbs/00_generation.ipynb 19
 application = ios.owner.add_application(file)
 person = ios.owner.add_person(file, **author_details)
 organisation = ios.owner.add_organisation(file, **organization_details)
@@ -131,7 +131,7 @@ actor = ios.owner.add_actor(file, actor=user)
 ifcopenshell.api.owner.settings.get_user = lambda x: user
 ifcopenshell.api.owner.settings.get_application = lambda x: application
 
-# %% ../nbs/00_generation.ipynb 21
+# %% ../nbs/00_generation.ipynb 22
 site = ios.root.create_entity(file, ifc_class='IfcSite', name=site_name)
 ios.aggregate.assign_object(file, product=site, relating_object=project)
 
@@ -141,26 +141,26 @@ ios.aggregate.assign_object(file, product=building, relating_object=site)
 storey = ios.root.create_entity(file, ifc_class='IfcBuildingStorey', name=storey_name)
 ios.aggregate.assign_object(file, product=storey, relating_object=building);
 
-# %% ../nbs/00_generation.ipynb 23
+# %% ../nbs/00_generation.ipynb 24
 pset_site_common = ios.pset.add_pset(file, product=site, name='Pset_SiteCommon')
 ios.pset.edit_pset(file, pset=pset_site_common, properties={'TotalArea': 400.})
 
-# %% ../nbs/00_generation.ipynb 26
+# %% ../nbs/00_generation.ipynb 27
 south_wall = ios.root.create_entity(file, ifc_class='IfcWall', name='South wall', predefined_type='SOLIDWALL')
 
-# %% ../nbs/00_generation.ipynb 28
+# %% ../nbs/00_generation.ipynb 29
 south_wall.is_a()
 
-# %% ../nbs/00_generation.ipynb 30
+# %% ../nbs/00_generation.ipynb 31
 south_wall.get_info()
 
-# %% ../nbs/00_generation.ipynb 32
+# %% ../nbs/00_generation.ipynb 33
 south_wall.Description = 'This is my first wall with the IfcOpenShell Python API!'
 
-# %% ../nbs/00_generation.ipynb 34
+# %% ../nbs/00_generation.ipynb 35
 ios.spatial.assign_container(file, product=south_wall, relating_structure=storey);
 
-# %% ../nbs/00_generation.ipynb 36
+# %% ../nbs/00_generation.ipynb 37
 south_wall_representation = ios.geometry.add_wall_representation(
     file, context=body, length=storey_size.x + 2 * wall_thickness, height=storey_size.z, 
     thickness=wall_thickness
@@ -172,7 +172,7 @@ ios.geometry.edit_object_placement(
     )
 );  #q4: why a matrix if Y is going to be ignored? why not just pass the placement coords + optionals x_local, z_local and scale?
 
-# %% ../nbs/00_generation.ipynb 38
+# %% ../nbs/00_generation.ipynb 39
 south_wall_style = ios.style.add_style(file)
 ios.style.add_surface_style(
     file, style=south_wall_style, ifc_class='IfcSurfaceStyleShading', attributes=wall_colour.info
@@ -181,7 +181,7 @@ ios.style.assign_representation_styles(
     file, shape_representation=south_wall_representation, styles=[south_wall_style]
 );
 
-# %% ../nbs/00_generation.ipynb 41
+# %% ../nbs/00_generation.ipynb 42
 footing = ios.root.create_entity(file, ifc_class='IfcFooting', name='Footing', predefined_type='STRIP_FOOTING')
 ios.spatial.assign_container(file, product=footing, relating_structure=storey)
 footing_representation = ios.geometry.add_wall_representation(
@@ -201,7 +201,7 @@ ios.style.assign_representation_styles(
     file, shape_representation=footing_representation, styles=[footing_style]
 );
 
-# %% ../nbs/00_generation.ipynb 44
+# %% ../nbs/00_generation.ipynb 45
 west_void_margin = 0.5
 west_opening = ios.root.create_entity(file, ifc_class='IfcOpeningElement')
 west_opening_width = 2 * single_window_params['overall_width']
@@ -243,7 +243,7 @@ ios.geometry.edit_object_placement(
 )
 ios.void.add_opening(file, opening=south_opening, element=south_wall);
 
-# %% ../nbs/00_generation.ipynb 47
+# %% ../nbs/00_generation.ipynb 48
 roof = ios.root.create_entity(file, ifc_class='IfcRoof', name='Roof', predefined_type='GABLE_ROOF')
 ios.spatial.assign_container(file, product=roof, relating_structure=storey)
 roof_representation_south = ios.geometry.add_wall_representation(
@@ -293,7 +293,7 @@ ios.style.assign_representation_styles(
     file, shape_representation=roof_representation_north, styles=[roof_style]
 );
 
-# %% ../nbs/00_generation.ipynb 50
+# %% ../nbs/00_generation.ipynb 51
 north_wall_representation = ifcopenshell.util.element.copy_deep(file, south_wall_representation)
 north_wall = ios.root.create_entity(file, ifc_class='IfcWall', name='North wall', predefined_type='SOLIDWALL')
 ios.spatial.assign_container(file, product=north_wall, relating_structure=storey)
@@ -304,7 +304,7 @@ ios.geometry.edit_object_placement(
     )
 );
 
-# %% ../nbs/00_generation.ipynb 52
+# %% ../nbs/00_generation.ipynb 53
 east_wall = ios.root.create_entity(
     file, ifc_class='IfcWall', name='East wall', predefined_type='SOLIDWALL'
 )
@@ -335,7 +335,7 @@ ios.geometry.edit_object_placement(
     file, product=east_wall, matrix=placement_matrix([storey_size.x / 2, -wall_thickness / 2, 0.])
 );
 
-# %% ../nbs/00_generation.ipynb 54
+# %% ../nbs/00_generation.ipynb 55
 west_wall = ios.root.create_entity(
     file, ifc_class='IfcWall', name='West wall', predefined_type='SOLIDWALL'
 )
@@ -355,7 +355,7 @@ ios.geometry.edit_object_placement(
 )
 ios.void.add_opening(file, opening=west_opening_copy, element=west_wall);
 
-# %% ../nbs/00_generation.ipynb 56
+# %% ../nbs/00_generation.ipynb 57
 connection_args = {'relating_connection': 'ATSTART', 'related_connection': 'ATEND'}
 
 rel_connect_paths = [
@@ -385,7 +385,7 @@ connection_curve = file.create_entity(
 for path in rel_connect_paths:
     path.ConnectionGeometry = connection_curve
 
-# %% ../nbs/00_generation.ipynb 59
+# %% ../nbs/00_generation.ipynb 60
 terrain_control_points = [  # obtained from the original IfcOpenHouse
     [( -10., -10., -4.13), ( -10., -4.33, -4.13), (-10., 0., -5.13), ( -10., 4.33, -7.13), ( -10., 10., -7.13)],
     [(-3.33, -10., -5.13), (-7.67, -3.67,    5.), ( -9., 0.,    1.), (-7.67, 7.67,    6.), (-3.33, 10., -4.13)],
@@ -426,24 +426,19 @@ if terrain_build_method != TerrainBuildMethod.NONE:
         file, shape_representation=terrain_representation, styles=[terrain_style]
     );
 
-# %% ../nbs/00_generation.ipynb 62
+# %% ../nbs/00_generation.ipynb 63
 brick = ios.material.add_material(file, name='Brick', category='brick')
 wall_layerset = ios.material.add_material_set(file, name='Wall', set_type='IfcMaterialLayerSet')
 brick_layer = ios.material.add_layer(file, layer_set=wall_layerset, material=brick)
 ios.material.edit_layer(file, layer=brick_layer, attributes={'LayerThickness': wall_thickness})
 
-#q9: This is a copy from the original IfcOpenHouse, but I guess in current IFC usages without types are 
-# not a good idea, right? Do I add types?
+#q9: Original IfcOpenHouse used usages. In current IFC, are usages without types a good idea? 
+# Do I add usages or types?
 
 for wall in [south_wall, north_wall, east_wall, west_wall]:
-    rel_usage_south_wall = ios.material.assign_material(file, product=wall, type='IfcMaterialLayerSetUsage')
-    ios.material.edit_layer_usage(
-        file, usage=rel_usage_south_wall.RelatingMaterial, attributes={
-            'ForLayerSet': wall_layerset, 'OffsetFromReferenceLine': 0.
-        }
-    )
+    ios.material.assign_material(file, product=wall, type='IfcMaterialLayerSet', material=wall_layerset)
 
-# %% ../nbs/00_generation.ipynb 65
+# %% ../nbs/00_generation.ipynb 66
 stair_flight_params = {'NumberOfRisers': 2, 'NumberOfTreads': 2, 'RiserHeight': 0.2, 'TreadLength': 0.25}
 stair_flight = ios.root.create_entity(file, ifc_class='IfcStairFlight', predefined_type='STRAIGHT')
 ios.spatial.assign_container(file, product=stair_flight, relating_structure=storey)
@@ -478,7 +473,7 @@ ios.style.assign_representation_styles(  # same style as the footing
     file, shape_representation=stair_flight_representation, styles=[footing_style]
 );
 
-# %% ../nbs/00_generation.ipynb 68
+# %% ../nbs/00_generation.ipynb 69
 door = ios.root.create_entity(file, ifc_class='IfcDoor', name='Main door', predefined_type='DOOR')
 ios.spatial.assign_container(file, product=door, relating_structure=storey)
 
@@ -517,7 +512,7 @@ ios.style.assign_representation_styles(
     file, shape_representation=door_representation, styles=[door_style]
 );
 
-# %% ../nbs/00_generation.ipynb 71
+# %% ../nbs/00_generation.ipynb 72
 window_right = ios.root.create_entity(
     file, ifc_class='IfcWindow', name='Right window', predefined_type='WINDOW'
 )
@@ -600,16 +595,16 @@ ios.style.assign_representation_styles(
     file, shape_representation=window_left_representation, styles=[window_style]
 );
 
-# %% ../nbs/00_generation.ipynb 74
+# %% ../nbs/00_generation.ipynb 75
 json_logger = ifcopenshell.validate.json_logger()
 ifcopenshell.validate.validate(file, json_logger)
 
 # Showing only first 3 here
 json_logger.statements[:min(3, len(json_logger.statements))]
 
-# %% ../nbs/00_generation.ipynb 76
+# %% ../nbs/00_generation.ipynb 77
 set([issue['attribute'] for issue in json_logger.statements])
 
-# %% ../nbs/00_generation.ipynb 87
+# %% ../nbs/00_generation.ipynb 88
 ifc_path = Path('..') / 'ifc' / 'IfcOpenHouse.ifc'
 file.write(ifc_path)
