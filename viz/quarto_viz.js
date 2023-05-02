@@ -19,4 +19,8 @@ async function loadIfc() {
   viewer.clipper.active = true;
 }
 
+// Useful to play in the browser / debugging
+window.viewer = viewer;
+window.model = model;
+
 loadIfc();
