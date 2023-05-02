@@ -17,10 +17,10 @@ async function loadIfc() {
   window.ondblclick = () => viewer.IFC.selector.pickIfcItem(true);
   window.onmousemove = () => viewer.IFC.selector.prePickIfcItem();
   viewer.clipper.active = true;
-}
 
-// Useful to play in the browser / debugging
-window.viewer = viewer;
-window.model = model;
+  // Useful to play in the browser / debugging
+  window.viewer = viewer;
+  window.model = model;
+}
 
 loadIfc();
