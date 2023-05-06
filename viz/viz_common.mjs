@@ -233,7 +233,9 @@ export async function loadIfcCommon(
             backgroundColor: new Color(0x86a6c3),
         });
         viewer.axes.setAxes();
+        window.viewer = viewer;
     }
+
     if (from_string) {
         let ifcStr = ifcUrl;
         if (ifcStr.charAt(0) === '"') {
@@ -243,11 +245,12 @@ export async function loadIfcCommon(
         let ifcStrArray = ifcStr.split("\\n");
         let ifcFile = await new File(ifcStrArray, "", {type: "text/plain"});
         model = await viewer.IFC.loadIfc(ifcFile);
+        window.model = model;
     } else {
-        const model = await viewer.IFC.loadIfcUrl(ifcUrl);
+        window.model = await viewer.IFC.loadIfcUrl(ifcUrl);
     }
-    await viewer.shadowDropper.renderShadow(model.modelID);
 
+    await viewer.shadowDropper.renderShadow(model.modelID);
     const ifcManager = viewer.IFC.loader.ifcManager;
     const ifcAPI = ifcManager.ifcAPI;
     window.onmousemove = () => viewer.IFC.selector.prePickIfcItem();
@@ -272,7 +275,5 @@ export async function loadIfcCommon(
     }
 
     viewer.clipper.active = true;
-    window.viewer = viewer;
-    window.model = model;
     showTransparentSurfaceStyles(model);
 }
