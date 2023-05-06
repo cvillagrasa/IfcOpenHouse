@@ -1,9 +1,4 @@
-import { Color } from "three";
-import { IfcViewerAPI } from "web-ifc-viewer";
-
-
-let viewer = null;
-let model = null;
+import { loadIfcCommon } from "./viz_common.mjs";
 
 
 async function loadIfc(ifcUrl, ifcStr) {
@@ -11,44 +6,20 @@ async function loadIfc(ifcUrl, ifcStr) {
   container.style.width = "60vw";
   container.style.height = "55vh";
 
+  let reload = false;
+  let fromString = false;
   if (ifcUrl === undefined) {
-    ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
-  }
-
-  if (model === null) {
-    viewer = new IfcViewerAPI({
-      container,
-      backgroundColor: new Color(0xa3adc9),
-    });
-    viewer.axes.setAxes();
-  } else {
-    await viewer.IFC.removeIfcModel(model.modelID);
-  }
-
-  if (ifcStr === undefined) {
-    model = await viewer.IFC.loadIfcUrl(ifcUrl);
-  } else {
-    if (ifcStr.charAt(0) === '"') {
-      ifcStr = ifcStr.slice(1, ifcStr.length - 1);
+    if (ifcStr === undefined) {
+      ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
+    } else {
+      ifcUrl = ifcStr;
+      reload = true;
+      fromString = true;
     }
-    window.ifcStr = ifcStr;
-    let ifcStrArray = ifcStr.split("\\n");
-    let ifcFile = await new File(ifcStrArray, "", {type: "text/plain"});
-    model = await viewer.IFC.loadIfc(ifcFile);
   }
 
-  await viewer.shadowDropper.renderShadow(model.modelID);
-  window.onmousemove = () => viewer.IFC.selector.prePickIfcItem();
-  window.ondblclick = async () => {
-    const {modelID, stepId} = await viewer.IFC.selector.pickIfcItem(true);
-    const ifcType = model.getIfcType(stepId);
-    console.log(`#${stepId} ${ifcType}`);
-  }
-
-  viewer.clipper.active = true;
+  loadIfcCommon(ifcUrl, "55vh", "60vw", fromString, reload);
 }
 
 // We can access these variables from the Jupyter Notebook
-window.viewer = viewer;
-window.model = model;
 window.loadIfc = loadIfc;

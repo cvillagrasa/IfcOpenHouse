@@ -216,19 +216,36 @@ async function showTransparentSurfaceStyles(model) {
     window.model.visible = false;
 }
 
-export async function loadIfcCommon(ifcUrl, height, width) {
+export async function loadIfcCommon(
+    ifcUrl, height, width, from_string=false, reload=false
+) {
     const container = document.getElementById("ifcjs-container");
     const infoPanelContainer = document.getElementById("id-info-div");
     const infoPanel = document.getElementById("id-info-p");
     if (width) container.style.width = width;
     if (height) container.style.height = height;
 
-    const viewer = new IfcViewerAPI({
-        container,
-        backgroundColor: new Color(0x86a6c3),
-    });
-    viewer.axes.setAxes();
-    const model = await viewer.IFC.loadIfcUrl(ifcUrl);
+    if (reload) {
+        await viewer.IFC.removeIfcModel(model.modelID);
+    } else {
+        const viewer = new IfcViewerAPI({
+            container,
+            backgroundColor: new Color(0x86a6c3),
+        });
+        viewer.axes.setAxes();
+    }
+    if (from_string) {
+        let ifcStr = ifcUrl;
+        if (ifcStr.charAt(0) === '"') {
+          ifcStr = ifcStr.slice(1, ifcStr.length - 1);
+        }
+        window.ifcStr = ifcStr;
+        let ifcStrArray = ifcStr.split("\\n");
+        let ifcFile = await new File(ifcStrArray, "", {type: "text/plain"});
+        model = await viewer.IFC.loadIfc(ifcFile);
+    } else {
+        const model = await viewer.IFC.loadIfcUrl(ifcUrl);
+    }
     await viewer.shadowDropper.renderShadow(model.modelID);
 
     const ifcManager = viewer.IFC.loader.ifcManager;
