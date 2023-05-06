@@ -12,6 +12,9 @@ a simple IFC model from scratch.
 
 <!-- This is where a canvas with an IFC.js visualisation of the model
     will be placed within the Quarto website -->
+<div class="info-panel hidden" id="id-info-div">
+    <p class="info" id="id-info-p"></p>
+</div>
 <div id="ifcjs-container">
 </div>
 

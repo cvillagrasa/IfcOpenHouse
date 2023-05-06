@@ -103,7 +103,9 @@ ios = IfcOpenShellPythonAPI()  #q1: thoughts about a data-scientish "import ifco
 
 
 # Setting up the project
-file = ios.project.create_file(version='IFC4X3')  # We're using 4x3, because why not? it has better docs
+file = ios.project.create_file(version='IFC4')  # Do not even think of 2X3 in 2023!
+# Pending to use 4x3 (much better docs) when defaults to IFC4X3_TC1 and IFC.js supports it
+
 project = ios.root.create_entity(file, ifc_class='IfcProject', name=project_name)
 ios.project.assign_declaration(file, definition=project, relating_context=project)  #q2: from my ignorance, is this necessary?
 ios.unit.assign_unit(
