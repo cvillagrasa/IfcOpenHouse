@@ -43,3 +43,27 @@ code {
 p code:not(.sourceCode) {
   background-color: #9d9fbe;
 }
+
+.info-panel {
+    z-index: 1;
+    position: absolute;
+    margin: 0.5rem;
+    display: inline-block;
+    color: white;
+    background: #0D1127;
+    padding: 1rem 1rem 1rem 1rem;
+    border-radius: 1.3rem;
+    border: 0.25rem solid #5978F3;
+    font-size: 0.85rem;
+    line-height: 1em;
+    letter-spacing: 0.075em;
+}
+
+.info {
+    display: inline;
+    color: white;
+}
+
+.hidden {
+    visibility: hidden;
+}
