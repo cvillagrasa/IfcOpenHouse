@@ -47,14 +47,14 @@ p code:not(.sourceCode) {
 .info-panel {
     z-index: 1;
     position: absolute;
-    margin: 0.5rem;
+    margin: 0.3rem;
     display: inline-block;
     color: white;
     background: #0D1127;
-    padding: 1rem 1rem 1rem 1rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
     border-radius: 1.3rem;
-    border: 0.25rem solid #5978F3;
-    font-size: 0.85rem;
+    border: 0.2rem solid #5978F3;
+    font-size: 0.7rem;
     line-height: 1em;
     letter-spacing: 0.075em;
 }

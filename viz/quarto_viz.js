@@ -3,7 +3,7 @@ import { loadIfcCommon } from "./viz_common.mjs";
 
 async function loadIfc() {
   const ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
-  loadIfcCommon(ifcUrl, "25vh");
+  loadIfcCommon(ifcUrl, "35vh");
 }
 
 loadIfc();
