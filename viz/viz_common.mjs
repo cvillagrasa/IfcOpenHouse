@@ -217,7 +217,7 @@ async function showTransparentSurfaceStyles(model) {
 }
 
 export async function loadIfcCommon(
-    ifcUrl, height, width, from_string=false, reload=false
+    ifcUrl, height, width, from_string=false
 ) {
     const container = document.getElementById("ifcjs-container");
     const infoPanelContainer = document.getElementById("id-info-div");
@@ -225,15 +225,15 @@ export async function loadIfcCommon(
     if (width) container.style.width = width;
     if (height) container.style.height = height;
 
-    if (reload) {
-        await viewer.IFC.removeIfcModel(model.modelID);
-    } else {
+    if (window.viewer === undefined) {
         const viewer = new IfcViewerAPI({
             container,
             backgroundColor: new Color(0x86a6c3),
         });
         viewer.axes.setAxes();
         window.viewer = viewer;
+    } else {
+        await viewer.IFC.removeIfcModel(model.modelID);
     }
 
     if (from_string) {

@@ -358,7 +358,7 @@ ios.geometry.edit_object_placement(
 ios.void.add_opening(file, opening=west_opening_copy, element=west_wall);
 
 # %% ../nbs/00_generation.ipynb 57
-connection_args = {'relating_connection': 'ATSTART', 'related_connection': 'ATEND'}
+connection_args = {'relating_connection': 'ATEND', 'related_connection': 'ATSTART'}
 
 rel_connect_paths = [
     ios.geometry.connect_path(
@@ -442,7 +442,7 @@ for wall in [south_wall, north_wall, east_wall, west_wall]:
 
 # %% ../nbs/00_generation.ipynb 66
 stair_flight_params = {'NumberOfRisers': 2, 'NumberOfTreads': 2, 'RiserHeight': 0.2, 'TreadLength': 0.25}
-stair_flight = ios.root.create_entity(file, ifc_class='IfcStairFlight', predefined_type='STRAIGHT')
+stair_flight = ios.root.create_entity(file, ifc_class='IfcStairFlight', name='Main entrance stair', predefined_type='STRAIGHT')
 ios.spatial.assign_container(file, product=stair_flight, relating_structure=storey)
 for attr, value in stair_flight_params.items():
     setattr(stair_flight, attr, value)  # the entity is monkey-patched with its IFC compliant attributes
