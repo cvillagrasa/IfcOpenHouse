@@ -607,6 +607,6 @@ json_logger.statements[:min(3, len(json_logger.statements))]
 # %% ../nbs/00_generation.ipynb 77
 set([issue['attribute'] for issue in json_logger.statements])
 
-# %% ../nbs/00_generation.ipynb 88
+# %% ../nbs/00_generation.ipynb 89
 ifc_path = Path('..') / 'ifc' / 'IfcOpenHouse.ifc'
 file.write(ifc_path)
