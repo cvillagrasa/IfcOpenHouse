@@ -10,6 +10,9 @@ includes a footing, walls with openings for doors and windows, a roof…
 but above all, it gives an overview about how to programmatically build
 a simple IFC model from scratch.
 
+Navigate through the following preview for yourself. Double click an
+element to gather entity info from the underlying IFC:
+
 <!-- This is where a canvas with an IFC.js visualisation of the model
     will be placed within the Quarto website -->
 <div class="info-panel hidden" id="id-info-div">
@@ -18,6 +21,7 @@ a simple IFC model from scratch.
 <div id="ifcjs-container">
 </div>
 
+  
 Check out the original blog post, as well as the C++ source if
 interested:
 
