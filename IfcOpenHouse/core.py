@@ -5,19 +5,19 @@ __all__ = ['project_name', 'author_details', 'author_role', 'organization_detail
            'storey_size', 'wall_thickness', 'footing_ledge', 'footing_size', 'roof_ledge', 'roof_thickness',
            'roof_angle', 'roof_angle_sin', 'roof_angle_cos', 'roof_height', 'roof_size', 'door_horizontal_offset',
            'window_base_height', 'right_window_horizontal_offset', 'stair_width', 'wall_colour', 'footing_colour',
-           'roof_colour', 'terrain_colour', 'door_colour', 'window_colour', 'terrain_build_method', 'ios', 'file',
-           'project', 'ctx', 'body', 'application', 'person', 'organisation', 'user', 'actor', 'site', 'building',
-           'storey', 'pset_site_common', 'south_wall', 'south_wall_representation', 'south_wall_style', 'footing',
-           'footing_representation', 'footing_style', 'west_void_margin', 'west_opening', 'west_opening_width',
-           'wo_representation', 'west_opening_coords', 'south_opening', 'south_opening_width', 'so_representation',
-           'roof', 'roof_representation_south', 'roof_representation_north', 'roof_downward_offset', 'south_roof',
-           'north_roof', 'roof_style', 'north_wall_representation', 'north_wall', 'east_wall',
-           'south_roof_clipping_matrix', 'north_roof_clipping_matrix', 'roof_clippings', 'east_wall_representation',
-           'west_wall', 'west_wall_representation', 'west_opening_copy', 'connection_args', 'rel_connect_paths',
-           'point_list', 'curve_on_relating', 'connection_curve', 'terrain_control_points', 'degree', 'multiplicity',
-           'brick', 'wall_layerset', 'brick_layer', 'stair_flight_params', 'stair_flight', 'stair_points',
-           'stair_flight_curve', 'stair_flight_profile', 'stair_flight_representation', 'door', 'door_opening',
-           'door_opening_representation', 'door_representation', 'door_style', 'window_right',
+           'roof_colour', 'terrain_colour', 'door_colour', 'window_colour', 'stair_colour', 'terrain_build_method',
+           'ios', 'file', 'project', 'ctx', 'body', 'application', 'person', 'organisation', 'user', 'actor', 'site',
+           'building', 'storey', 'pset_site_common', 'south_wall', 'south_wall_representation', 'south_wall_style',
+           'footing', 'footing_representation', 'footing_style', 'west_void_margin', 'west_opening',
+           'west_opening_width', 'wo_representation', 'west_opening_coords', 'south_opening', 'south_opening_width',
+           'so_representation', 'roof', 'roof_representation_south', 'roof_representation_north',
+           'roof_downward_offset', 'south_roof', 'north_roof', 'roof_style', 'north_wall_representation', 'north_wall',
+           'east_wall', 'south_roof_clipping_matrix', 'north_roof_clipping_matrix', 'roof_clippings',
+           'east_wall_representation', 'west_wall', 'west_wall_representation', 'west_opening_copy', 'connection_args',
+           'rel_connect_paths', 'point_list', 'curve_on_relating', 'connection_curve', 'terrain_control_points',
+           'degree', 'multiplicity', 'brick', 'wall_layerset', 'brick_layer', 'stair_flight_params', 'stair_flight',
+           'stair_points', 'stair_flight_curve', 'stair_flight_profile', 'stair_flight_representation', 'stair_style',
+           'door', 'door_opening', 'door_opening_representation', 'door_representation', 'door_style', 'window_right',
            'window_right_representation', 'window_west', 'window_west_representation', 'window_left',
            'window_left_representation', 'window_style', 'json_logger', 'ifc_path']
 
@@ -82,6 +82,7 @@ roof_colour = ColourRGB(.24, 0.08, 0.04)
 terrain_colour = ColourRGB(.15, 0.25, 0.05)
 door_colour = ColourRGB(.8, .8, .8)
 window_colour = ColourRGB(.5, 0.4, 0.3, transparency=0.8)
+stair_colour = ColourRGB(.45, 0.47, 0.56)
 
 # Choice of terrain building method. Use NONE if unsure about the viewer capabilities.   
 terrain_build_method = TerrainBuildMethod.TESSELATE_OCC_SHAPE
@@ -103,8 +104,10 @@ ios = IfcOpenShellPythonAPI()  #q1: thoughts about a data-scientish "import ifco
 
 
 # Setting up the project
-file = ios.project.create_file(version='IFC4')  # Do not even think of 2X3 in 2023!
-# Pending to use 4x3 (much better docs) when defaults to IFC4X3_TC1 and IFC.js supports it
+file = ios.project.create_file(version='IFC4')
+# Don't use 2X3 in 2023! It's terribly outdated and lacks many useful classes. This simple
+# project uses many >IFC4 features, and hence selecting 'IFC2X3' here would only lead to issues.
+# Pending to use 4x3 (much better docs) when ios defaults to IFC4X3_TC1 and IFC.js supports it
 
 project = ios.root.create_entity(file, ifc_class='IfcProject', name=project_name)
 ios.project.assign_declaration(file, definition=project, relating_context=project)  #q2: from my ignorance, is this necessary?
@@ -471,8 +474,12 @@ ios.geometry.edit_object_placement(
     )
 )
 
-ios.style.assign_representation_styles(  # same style as the footing
-    file, shape_representation=stair_flight_representation, styles=[footing_style]
+stair_style = ios.style.add_style(file)
+ios.style.add_surface_style(
+    file, style=stair_style, ifc_class='IfcSurfaceStyleShading', attributes=stair_colour.info
+)
+ios.style.assign_representation_styles(
+    file, shape_representation=stair_flight_representation, styles=[stair_style]
 );
 
 # %% ../nbs/00_generation.ipynb 69
@@ -607,6 +614,6 @@ json_logger.statements[:min(3, len(json_logger.statements))]
 # %% ../nbs/00_generation.ipynb 77
 set([issue['attribute'] for issue in json_logger.statements])
 
-# %% ../nbs/00_generation.ipynb 89
+# %% ../nbs/00_generation.ipynb 86
 ifc_path = Path('..') / 'ifc' / 'IfcOpenHouse.ifc'
 file.write(ifc_path)
