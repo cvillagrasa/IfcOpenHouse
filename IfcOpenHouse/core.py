@@ -49,7 +49,7 @@ organization_details = {'name': 'OSArch', 'identification': 'OSArch'}
 site_name, building_name, storey_name = 'OSArch Land', 'Open house', 'Ground floor'
 
 # All dimensions in meters
-storey_size = Vector([10., 5., 3.])  # Utility class to call "storey_size.x" and improve readability
+storey_size = Vector([10., 5., 3.])
 wall_thickness = 0.36
 footing_ledge = 0.05
 footing_size = Vector([
