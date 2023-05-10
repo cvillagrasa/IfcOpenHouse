@@ -157,19 +157,6 @@ def clipping_matrix(
 
 
 @dataclass
-class Size2D:
-    """Utility class to improve readability of sizes"""
-    x: float
-    y: float
-
-
-@dataclass
-class Size3D(Size2D):
-    """Utility class to improve readability of 3D sizes"""
-    z: float
-
-
-@dataclass
 class ColourRGB:
     """Utility class to indicate surface colours in style.add_surface_style"""
     red: float
@@ -186,7 +173,7 @@ class ColourRGB:
 
 class TerrainBuildMethod(Enum):
     NONE = auto()
-    NATIVE_BSPLINE = auto()  # fancy NURBS surface not supported in the some IFC viewers
+    NATIVE_BSPLINE = auto()  # fancy NURBS surface not supported in some IFC viewers
     TESSELATE_OCC_SHAPE = auto()  # needs Open Cascade "mamba install -c conda-forge pythonocc-core"
 
 

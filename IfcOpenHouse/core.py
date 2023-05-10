@@ -25,6 +25,7 @@ __all__ = ['project_name', 'author_details', 'author_role', 'organization_detail
 import sys
 from pathlib import Path
 from collections import defaultdict
+from mathutils import Vector
 import numpy as np
 import ifcopenshell
 import ifcopenshell.api
@@ -35,9 +36,8 @@ import ifcopenshell.api.geometry
 import ifcopenshell.validate
 
 from IfcOpenHouse.ios_utils import (
-    IfcOpenShellPythonAPI, placement_matrix, clipping_matrix, Size2D, Size3D, ColourRGB, 
-    TerrainBuildMethod, build_native_bspline_terrain, build_tesselated_occ_terrain,
-    ios_entity_overwrite_hook
+    IfcOpenShellPythonAPI, placement_matrix, clipping_matrix, ColourRGB, TerrainBuildMethod, 
+    build_native_bspline_terrain, build_tesselated_occ_terrain, ios_entity_overwrite_hook
 )
 
 # %% ../nbs/00_generation.ipynb 12
@@ -49,15 +49,15 @@ organization_details = {'name': 'OSArch', 'identification': 'OSArch'}
 site_name, building_name, storey_name = 'OSArch Land', 'Open house', 'Ground floor'
 
 # All dimensions in meters
-storey_size = Size3D(10., 5., 3.)  # Utility class to call "storey_size.x" and improve readability
+storey_size = Vector([10., 5., 3.])  # Utility class to call "storey_size.x" and improve readability
 wall_thickness = 0.36
 footing_ledge = 0.05
-footing_size = Size3D(
+footing_size = Vector([
     storey_size.x + 2 * (wall_thickness + footing_ledge),
     storey_size.y + 2 * (wall_thickness + footing_ledge),
     2.
-)
-roof_ledge = Size2D(0.1, 0.22)
+])
+roof_ledge = Vector([0.1, 0.22])
 roof_thickness = 0.36
 roof_angle = 45. # degrees
 roof_angle_sin = float(np.sin(roof_angle * np.pi/180))
@@ -65,11 +65,11 @@ roof_angle_cos = float(np.cos(roof_angle * np.pi/180))
 roof_height = float(
     (storey_size.y / 2 + wall_thickness + roof_ledge.y) * np.tan(roof_angle * np.pi / 180)
 )
-roof_size = Size3D(
+roof_size = Vector([
     storey_size.x + 2 * (wall_thickness + roof_ledge.x),
     storey_size.y + 2 * (wall_thickness + roof_ledge.y),
     roof_height
-)
+])
 door_horizontal_offset = 1.6
 window_base_height = 0.4
 right_window_horizontal_offset = 2.
