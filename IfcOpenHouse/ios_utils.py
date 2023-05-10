@@ -186,7 +186,7 @@ class ColourRGB:
 
 class TerrainBuildMethod(Enum):
     NONE = auto()
-    NATIVE_BSPLINE = auto()  # fancy NURBS surface not supported in the majority of IFC viewers
+    NATIVE_BSPLINE = auto()  # fancy NURBS surface not supported in the some IFC viewers
     TESSELATE_OCC_SHAPE = auto()  # needs Open Cascade "mamba install -c conda-forge pythonocc-core"
 
 
@@ -199,12 +199,11 @@ def build_native_bspline_terrain(
             file.create_entity('IfcCartesianPoint', Coordinates=coord) for coord in row
         ] for row in terrain_control_points
     ]
-    max_i, max_j = len(terrain_control_points[0]) - 1, len(terrain_control_points) - 1
     cpoints_curve = {
-        'west': [coord for i, row in enumerate(terrain_control_point_list) for coord in row if i == 0],
-        'east': [coord for i, row in enumerate(terrain_control_point_list) for coord in row if i == max_i],
-        'south': [coord for row in terrain_control_point_list for j, coord in enumerate(row) if j == 0],
-        'north': [coord for row in terrain_control_point_list for j, coord in enumerate(row) if j == max_j]
+        'west': terrain_control_point_list[0],
+        'east': terrain_control_point_list[-1],
+        'south': [row[0] for row in terrain_control_point_list],
+        'north': [row[-1] for row in terrain_control_point_list]
     }
     spline_surface = file.create_entity(
         'IfcBSplineSurfaceWithKnots', UDegree=degree, VDegree=degree,
@@ -221,10 +220,7 @@ def build_native_bspline_terrain(
         ) for side, curve in cpoints_curve.items()
     }
     edge_curve_end_indices = {
-        'south': ([0, 0], [max_i, 0]),
-        'north': ([0, max_j], [0, max_j]),
-        'west': ([0, 0], [0, max_j]),
-        'east': ([max_i, 0], [max_i, max_j])
+        'south': ([0, 0], [-1, 0]), 'north': ([0, -1], [-1, -1]), 'west': ([0, 0], [0, -1]), 'east': ([-1, 0], [-1, -1])
     }
     edge_curve_ends = {
         side: [
@@ -240,19 +236,15 @@ def build_native_bspline_terrain(
         ) for side, edge_curve_geometry in edge_curve_geometries.items()
     }
     oriented_edges = {
-        side: file.create_entity('IfcOrientedEdge', EdgeElement=edge_curve, Orientation=True)
+        side: file.create_entity('IfcOrientedEdge', EdgeElement=edge_curve, Orientation=side in ('west', 'north'))
         for side, edge_curve in edge_curves.items()
     }
-    edge_loops = {
-        side: file.create_entity('IfcEdgeLoop', EdgeList=[oriented_edge])
-        for side, oriented_edge in oriented_edges.items()
-    }
-    bounds = {
-        side: file.create_entity('IfcFaceOuterBound', Bound=edge_loop, Orientation=True)
-        for side, edge_loop in edge_loops.items()
-    }
+    edge_loop = file.create_entity(
+        'IfcEdgeLoop', EdgeList=[oriented_edges[side] for side in ('west', 'north', 'east', 'south')]
+    )
+    bound = file.create_entity('IfcFaceOuterBound', Bound=edge_loop, Orientation=True)
     advanced_face = file.create_entity(
-        'IfcAdvancedFace', Bounds=list(bounds.values()), FaceSurface=spline_surface, SameSense=True
+        'IfcAdvancedFace', Bounds=[bound], FaceSurface=spline_surface, SameSense=True
     )
     closed_shell = file.create_entity('IfcClosedShell', CfsFaces=[advanced_face])
     advanced_brep = file.create_entity('IfcAdvancedBrep', Outer=closed_shell)
