@@ -1,0 +1,16 @@
+name: IfcOpenHouse
+channels:
+  - ifcopenshell
+  - conda-forge
+dependencies:
+  - pip
+  - python>=3.11
+  - numpy>=1.24
+  - nptyping=2.5.0
+  - ifcopenshell=0.7.0
+  - pythonocc-core>=7.7.0
+  - jupyterthemes=0.20.0
+  - pip:
+    - pip>=latest
+    - mathutils>=3.3.0
+    - nbdev>=latest

@@ -61,19 +61,10 @@ repository. For the latter, follow these installation instructions.
 You may run the following command to clone the repository and install
 all necessary dependencies.
 
-TODO: Integrate with `nbdev` actions and settings.ini for easier
-installation.
-
 ``` sh
-mamba create --name IfcOpenHouse
-conda activate IfcOpenHouse
 git clone https://github.com/cvillagrasa/IfcOpenHouse.git
-mamba install numpy>=1.24
-mamba install -c conda-forge nptyping=2.5.0
-mamba install -c ifcopenshell ifcopenshell=0.7.0
-mamba install -c conda-forge pythonocc-core>=7.7.0
-pip install mathutils>=3.3.0
-pip install -U nbdev
+mamba env create --file environment.yml
+conda activate IfcOpenHouse
 pip install -e .
 ```
 
@@ -85,7 +76,6 @@ As an extra step, use dark mode if you wish (see
 for more info):
 
 ``` sh
-mamba install -c conda-forge jupyterthemes=0.20.0
 jt -t chesterish -T -N -kl
 ```
 

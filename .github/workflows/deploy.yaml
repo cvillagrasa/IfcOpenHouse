@@ -20,18 +20,10 @@ jobs:
         with:
           python-version: 3.11
           miniforge-variant: Mambaforge
+          environment-file: environment.yml
       - name: Install requirements and test nbdev
         run: |
           set -ux
-          mamba install pip
-          python -m pip install --upgrade pip
-          mamba install numpy>=1.24
-          mamba install -c conda-forge nptyping=2.5.0
-          mamba install -c ifcopenshell ifcopenshell=0.7.0
-          mamba install -c conda-forge pythonocc-core>=7.7.0
-          mamba install -c conda-forge jupyterthemes=0.20.0
-          pip install mathutils>=3.3.0
-          pip install -U nbdev
           pip install -e '.[dev]'
           nbdev_docs
       - uses: peaceiris/actions-gh-pages@v3
