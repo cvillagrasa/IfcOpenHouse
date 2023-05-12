@@ -156,6 +156,18 @@ def clipping_matrix(
     return [[x, y, z, p] for x, y, z, p in zip(x_dir, y_dir, z_dir, point)]
 
 
+def clipping(
+    point: list[float, float, float],
+    x_dir: list[float, float, float],
+    z_dir: list[float, float, float]
+) -> dict[str, str | list[lfloat4, lfloat4, lfloat4]]:
+    return {
+        'type': 'IfcBooleanClippingResult',
+        'operand_type': 'IfcHalfSpaceSolid',
+        'matrix': clipping_matrix(point, x_dir, z_dir)
+    }
+
+
 @dataclass
 class ColourRGB:
     """Utility class to indicate surface colours in style.add_surface_style"""

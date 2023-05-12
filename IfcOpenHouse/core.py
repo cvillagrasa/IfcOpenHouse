@@ -7,17 +7,17 @@ __all__ = ['project_name', 'author_details', 'author_role', 'organization_detail
            'window_base_height', 'right_window_horizontal_offset', 'stair_width', 'wall_colour', 'footing_colour',
            'roof_colour', 'terrain_colour', 'door_colour', 'window_colour', 'stair_colour', 'terrain_build_method',
            'ios', 'file', 'project', 'ctx', 'body', 'application', 'person', 'organisation', 'user', 'actor', 'site',
-           'building', 'storey', 'pset_site_common', 'south_wall', 'south_wall_representation', 'south_wall_style',
-           'footing', 'footing_representation', 'footing_style', 'west_void_margin', 'west_opening',
-           'west_opening_width', 'wo_representation', 'west_opening_coords', 'south_opening', 'south_opening_width',
-           'so_representation', 'roof', 'roof_representation_south', 'roof_representation_north',
-           'roof_downward_offset', 'south_roof', 'north_roof', 'roof_style', 'north_wall_representation', 'north_wall',
-           'east_wall', 'south_roof_clipping_matrix', 'north_roof_clipping_matrix', 'roof_clippings',
-           'east_wall_representation', 'west_wall', 'west_wall_representation', 'west_opening_copy', 'connection_args',
-           'rel_connect_paths', 'point_list', 'curve_on_relating', 'connection_curve', 'terrain_control_points',
-           'degree', 'multiplicity', 'brick', 'wall_layerset', 'brick_layer', 'stair_flight_params', 'stair_flight',
-           'stair_points', 'stair_flight_curve', 'stair_flight_profile', 'stair_flight_representation', 'stair_style',
-           'door', 'door_opening', 'door_opening_representation', 'door_representation', 'door_style', 'window_right',
+           'building', 'storey', 'pset_site_common', 'south_wall', 'south_wall_representation', 'wall_style', 'footing',
+           'footing_representation', 'footing_style', 'west_void_margin', 'west_opening', 'west_opening_width',
+           'wo_representation', 'west_opening_coords', 'south_opening', 'south_opening_width', 'so_representation',
+           'roof', 'roof_representation_south', 'roof_representation_north', 'roof_downward_offset', 'south_roof',
+           'north_roof', 'roof_style', 'north_wall_representation', 'north_wall', 'east_wall', 'south_roof_clipping',
+           'north_roof_clipping', 'east_wall_representation', 'west_wall', 'west_wall_representation',
+           'west_opening_copy', 'connection_args', 'rel_connect_paths', 'point_list', 'curve_on_relating',
+           'connection_curve', 'terrain_control_points', 'degree', 'multiplicity', 'brick', 'wall_layerset',
+           'brick_layer', 'stair_flight_params', 'stair_flight', 'stair_points', 'stair_flight_curve',
+           'stair_flight_profile', 'stair_flight_representation', 'stair_style', 'door', 'door_opening',
+           'door_opening_representation', 'door_representation', 'door_style', 'window_right',
            'window_right_representation', 'window_west', 'window_west_representation', 'window_left',
            'window_left_representation', 'window_style', 'json_logger', 'ifc_path']
 
@@ -36,7 +36,7 @@ import ifcopenshell.api.geometry
 import ifcopenshell.validate
 
 from IfcOpenHouse.ios_utils import (
-    IfcOpenShellPythonAPI, placement_matrix, clipping_matrix, ColourRGB, TerrainBuildMethod, 
+    IfcOpenShellPythonAPI, placement_matrix, clipping, ColourRGB, TerrainBuildMethod, 
     build_native_bspline_terrain, build_tesselated_occ_terrain, ios_entity_overwrite_hook
 )
 
@@ -106,7 +106,7 @@ ios = IfcOpenShellPythonAPI()  #q1: thoughts about a data-scientish "import ifco
 # Setting up the project
 file = ios.project.create_file(version='IFC4')
 # Don't use 2X3 in 2023! It's terribly outdated and lacks many useful classes. This simple
-# project uses many >IFC4 features, and hence selecting 'IFC2X3' here would only lead to issues.
+# project uses many >=IFC4 features, and hence selecting 'IFC2X3' here would only lead to issues.
 # Pending to use 4x3 (much better docs) when ios defaults to IFC4X3_TC1 and IFC.js supports it
 
 project = ios.root.create_entity(file, ifc_class='IfcProject', name=project_name)
@@ -178,12 +178,12 @@ ios.geometry.edit_object_placement(
 );  #q4: why a matrix if Y is going to be ignored? why not just pass the placement coords + optionals x_local, z_local and scale?
 
 # %% ../nbs/00_generation.ipynb 39
-south_wall_style = ios.style.add_style(file)
+wall_style = ios.style.add_style(file)
 ios.style.add_surface_style(
-    file, style=south_wall_style, ifc_class='IfcSurfaceStyleShading', attributes=wall_colour.info
+    file, style=wall_style, ifc_class='IfcSurfaceStyleShading', attributes=wall_colour.info
 )
 ios.style.assign_representation_styles(
-    file, shape_representation=south_wall_representation, styles=[south_wall_style]
+    file, shape_representation=south_wall_representation, styles=[wall_style]
 );
 
 # %% ../nbs/00_generation.ipynb 42
@@ -307,6 +307,9 @@ ios.geometry.edit_object_placement(
     file, product=north_wall, matrix=placement_matrix(
         [-storey_size.x/2 - wall_thickness, storey_size.y + wall_thickness / 2, 0.]
     )
+)
+ios.style.assign_representation_styles(
+    file, shape_representation=north_wall_representation, styles=[wall_style]
 );
 
 # %% ../nbs/00_generation.ipynb 53
@@ -315,29 +318,27 @@ east_wall = ios.root.create_entity(
 )
 ios.spatial.assign_container(file, product=east_wall, relating_structure=storey)
 
-south_roof_clipping_matrix = clipping_matrix(
+south_roof_clipping = clipping(
     [0., wall_thickness / 2, storey_size.z], x_dir=[1., 0., 0.], 
     z_dir=[0., -roof_angle_sin, roof_angle_cos]
 )
-north_roof_clipping_matrix = clipping_matrix(
+north_roof_clipping = clipping(
     [0., storey_size.y + 3 / 2 * wall_thickness, storey_size.z], x_dir=[1., 0., 0.], 
     z_dir=[0., roof_angle_sin, roof_angle_cos]
 )
 
-roof_clippings = [
-    {
-        'type': 'IfcBooleanClippingResult', 'operand_type': 'IfcHalfSpaceSolid', 'matrix': matrix
-    } for matrix in [south_roof_clipping_matrix, north_roof_clipping_matrix]
-]
-
 east_wall_representation = ios.geometry.add_wall_representation(
     file, context=body, length=wall_thickness, height=storey_size.z + roof_size.z, 
-    thickness=storey_size.y + 2 * wall_thickness, clippings=roof_clippings
+    thickness=storey_size.y + 2 * wall_thickness, clippings=[south_roof_clipping, north_roof_clipping]
 )
 
 ios.geometry.assign_representation(file, product=east_wall, representation=east_wall_representation)
 ios.geometry.edit_object_placement(
     file, product=east_wall, matrix=placement_matrix([storey_size.x / 2, -wall_thickness / 2, 0.])
+)
+
+ios.style.assign_representation_styles(
+    file, shape_representation=east_wall_representation, styles=[wall_style]
 );
 
 # %% ../nbs/00_generation.ipynb 55
@@ -358,7 +359,11 @@ west_opening_copy = ifcopenshell.util.element.copy_deep(file, west_opening)
 ios.geometry.edit_object_placement(
     file, product=west_opening_copy, matrix=placement_matrix(west_opening_coords)
 )
-ios.void.add_opening(file, opening=west_opening_copy, element=west_wall);
+ios.void.add_opening(file, opening=west_opening_copy, element=west_wall)
+
+ios.style.assign_representation_styles(
+    file, shape_representation=west_wall_representation, styles=[wall_style]
+);
 
 # %% ../nbs/00_generation.ipynb 57
 connection_args = {'relating_connection': 'ATEND', 'related_connection': 'ATSTART'}
@@ -402,18 +407,11 @@ terrain_control_points = [  # obtained from the original IfcOpenHouse
 degree, multiplicity = 4, 5
 
 if terrain_build_method == TerrainBuildMethod.NATIVE_BSPLINE:
-    # https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcAdvancedBrep.htm
-    # Advanced BREPs are complex and there is no high level API for now, so feel free to skip
-    
-    #q8: where can I check if I have done this right? any viewer showing IfcBSplineSurfaceWithKnots?
-    
     terrain_representation = build_native_bspline_terrain(
         file, body, terrain_control_points, degree, multiplicity
     )
     
 elif terrain_build_method == TerrainBuildMethod.TESSELATE_OCC_SHAPE:
-    # Open Cascade is also complex, feel free to skip as well
-    
     terrain_representation = build_tesselated_occ_terrain(
         file, body, terrain_control_points, degree, multiplicity
     )
@@ -607,9 +605,7 @@ ios.style.assign_representation_styles(
 # %% ../nbs/00_generation.ipynb 75
 json_logger = ifcopenshell.validate.json_logger()
 ifcopenshell.validate.validate(file, json_logger)
-
-# Showing only first 3 here
-json_logger.statements[:min(3, len(json_logger.statements))]
+json_logger.statements[:min(3, len(json_logger.statements))]  # Showing only first 3 here
 
 # %% ../nbs/00_generation.ipynb 77
 set([issue['attribute'] for issue in json_logger.statements])
