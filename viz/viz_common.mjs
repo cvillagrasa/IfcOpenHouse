@@ -234,6 +234,8 @@ export async function loadIfcCommon(
         window.viewer = viewer;
     } else {
         await viewer.IFC.removeIfcModel(model.modelID);
+        await model.ifcManager.dispose();
+        window.model = null;
     }
 
     if (from_string) {

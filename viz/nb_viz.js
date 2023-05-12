@@ -7,6 +7,7 @@ async function loadIfc(ifcUrl, fromString=false) {
   container.style.height = "55vh";
 
   if (ifcUrl === undefined) {
+    console.log("Using default IFC model from GitHub...");
     ifcUrl = "https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/ifc/IfcOpenHouse.ifc";
   }
 
