@@ -250,7 +250,8 @@ def build_native_bspline_terrain(
 
 def build_tesselated_occ_terrain(
         file: ifcopenshell.file, body: ifcopenshell.entity_instance,
-        terrain_control_points: list[list[tuple[float, ...], ...], ...], degree: int, multiplicity: int
+        terrain_control_points: list[list[tuple[float, ...], ...], ...], degree: int, multiplicity: int,
+        deflection: float = 0.1
 ) -> ifcopenshell.entity_instance:
     import ifcopenshell.geom
     from OCC.Core.BRepBuilderAPI import BRepBuilderAPI_MakeFace
@@ -273,7 +274,7 @@ def build_tesselated_occ_terrain(
 
     surf = Geom_BSplineSurface(cv, knots, knots, mult, mult, degree, degree)
     terrain_shape = BRepBuilderAPI_MakeFace(surf, precision_Confusion())
-    terrain_definition_shape = ifcopenshell.geom.tesselate(file.schema, terrain_shape.Shape(), 0.1)
+    terrain_definition_shape = ifcopenshell.geom.tesselate(file.schema, terrain_shape.Shape(), deflection)
     terrain_representation = terrain_definition_shape.Representations[0]
     terrain_representation.ContextOfItems = body
     file.add(terrain_representation)

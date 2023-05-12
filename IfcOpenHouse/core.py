@@ -412,8 +412,9 @@ if terrain_build_method == TerrainBuildMethod.NATIVE_BSPLINE:
     )
     
 elif terrain_build_method == TerrainBuildMethod.TESSELATE_OCC_SHAPE:
+    deflection = 0.01
     terrain_representation = build_tesselated_occ_terrain(
-        file, body, terrain_control_points, degree, multiplicity
+        file, body, terrain_control_points, degree, multiplicity, deflection
     )
 
 if terrain_build_method != TerrainBuildMethod.NONE:
