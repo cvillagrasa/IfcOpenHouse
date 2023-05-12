@@ -49,17 +49,12 @@ automate the production of a script and a Quarto website, as well as
 helping with [Git-friendly
 Jupyter](https://nbdev.fast.ai/tutorials/git_friendly_jupyter.html).
 
-## Generation
-
-Go to [generation](00_generation.ipynb) in order to find the extensive
-instructions for the IfcOpenHouse generation 🚀.
-
-## Install
+## Getting started / local installation
 
 These set of notebooks 📒 may be conveniently browsed through their
 Quarto website 🌎, or alternatively be run on your own end by cloning
-the repository. For the latter, follow these installation instructions
-📝.
+the repository. For the former, refer to the following section. For the
+latter, follow these installation instructions 📝.
 
 You’ll need
 [Mambaforge](https://github.com/conda-forge/miniforge#mambaforge) 🐍
@@ -88,3 +83,13 @@ jt -t chesterish -T -N -kl
 Lastly, you may also want to edit the JavaScript code 👩🏽‍💻 for the model
 preview by running `npm i` from the `viz` directory and regenerate the
 bundles with either `npm run build_nb` or `npm run watch_nb`.
+
+That’s it! you are now ready to locally open the notebook
+`nbs/00_generation.ipynb` and start having fun 🥳.
+
+## Step-by-step tutorial / online
+
+Alternatively, you may just start by browsing the contents firstly, and
+perhaps attempt to run it locally later. Just go to
+[generation](00_generation.ipynb) and you’ll find an IfcOpenHouse
+generation online walkthrough 🚀🚀🚀.
