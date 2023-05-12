@@ -218,15 +218,9 @@ def build_native_bspline_terrain(
             KnotMultiplicities=[multiplicity, multiplicity], Knots=[0., 1.], KnotSpec='UNSPECIFIED'
         ) for side, curve in cpoints_curve.items()
     }
-    edge_curve_end_indices = {
-        'south': ([0, 0], [-1, 0]), 'north': ([0, -1], [-1, -1]), 'west': ([0, 0], [0, -1]), 'east': ([-1, 0], [-1, -1])
-    }
     edge_curve_ends = {
-        side: [
-            file.create_entity(
-                'IfcVertexPoint', VertexGeometry=terrain_control_point_list[indices[i][0]][indices[i][1]]
-            ) for i in range(2)
-        ] for side, indices in edge_curve_end_indices.items()
+        side: [file.create_entity('IfcVertexPoint', VertexGeometry=curve[idx]) for idx in (0, -1)]
+        for side, curve in cpoints_curve.items()
     }
     edge_curves = {
         side: file.create_entity(
