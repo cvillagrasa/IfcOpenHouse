@@ -9,6 +9,7 @@ dependencies:
   - nptyping=2.5.0
   - ifcopenshell=0.7.0
   - pythonocc-core>=7.7.0
+  - notebook=6.5.4
   - jupyterthemes=0.20.0
   - pip:
     - pip>=latest

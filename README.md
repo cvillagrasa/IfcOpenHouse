@@ -80,12 +80,18 @@ for more info):
 jt -t chesterish -T -N -kl
 ```
 
-Lastly, you may also want to edit the JavaScript code 👩🏽‍💻 for the model
-preview by running `npm i` from the `viz` directory and regenerate the
-bundles with either `npm run build_nb` or `npm run watch_nb`.
+You may now launch the Jupyter 🪐 Notebook 📒 dashboard:
 
-That’s it! you are now ready to locally open the notebook
+``` bash
+jupyter notebook
+```
+
+And that’s it! you are now ready to locally open the notebook
 `nbs/00_generation.ipynb` and start having fun 🥳.
+
+Lastly, you may also want to edit the JavaScript code 👩🏽‍💻 for the model
+preview by running `npm i` from the `viz` directory, and regenerating
+the bundle with `npm run build_nb`.
 
 ## Step-by-step tutorial / online
 
