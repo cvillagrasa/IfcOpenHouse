@@ -1,4 +1,5 @@
 import { Color, MeshLambertMaterial } from "three";
+import { IFCLoader } from "web-ifc-three/IFCLoader";
 import { IfcViewerAPI } from "web-ifc-viewer";
 
 
@@ -236,6 +237,9 @@ export async function loadIfcCommon(
         await viewer.IFC.removeIfcModel(model.modelID);
         await model.ifcManager.dispose();
         window.model = null;
+        viewer.IFC.loader = null;
+        window.model = new IFCLoader();
+        viewer.IFC.loader = window.model;
     }
 
     if (from_string) {
