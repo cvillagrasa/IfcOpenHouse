@@ -25,8 +25,12 @@ class IfcOpenShellPythonAPI:
         return self
 
     def __call__(self, *args, **kwargs) -> Any:
-        result: Any = ifcopenshell.api.run('.'.join(self.module_stack), *args, **kwargs)
-        self.reset()
+        try:
+            result: Any = ifcopenshell.api.run('.'.join(self.module_stack), *args, **kwargs)
+        except Exception as err:
+            raise err
+        finally:
+            self.reset()
         return result
 
     def reset(self) -> None:
