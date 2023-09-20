@@ -99204,3 +99204,15 @@ var SelectionWindowMode;
     SelectionWindowMode[SelectionWindowMode["lasso"] = 0] = "lasso";
     SelectionWindowMode[SelectionWindowMode["box"] = 1] = "box";
 })(SelectionWindowMode || (SelectionWindowMode = {}));
+
+async function loadIfcFromColab(width="900px", height="500px") {
+  google.colab.kernel.comms.registerTarget('ifcjsviz', (comm, message) => {
+    let ifcStr = message["data"]["ifcStr"];
+    loadIfc(ifcStr, true);
+    const container = document.getElementById("ifcjs-container");
+    container.style.width = width;
+    container.style.height = height;
+  });
+}
+
+window.loadIfcFromColab = loadIfcFromColab;

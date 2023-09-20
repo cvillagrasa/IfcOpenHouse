@@ -10,3 +10,5 @@ async function loadIfcFromColab(width="900px", height="500px") {
     container.style.height = height;
   });
 }
+
+window.loadIfcFromColab = loadIfcFromColab;
