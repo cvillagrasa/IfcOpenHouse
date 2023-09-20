@@ -7,16 +7,24 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build_nb": "rollup -c rollup_nb.config.mjs",
     "watch_nb": "rollup -w -c rollup_nb.config.mjs",
+    "build_colab": "rollup -c rollup_colab.config.mjs",
+    "watch_colab": "rollup -w -c rollup_colab.config.mjs",
     "build_quarto": "rollup -c rollup_quarto.config.mjs",
-    "watch_quarto": "rollup -w -c rollup_quarto.config.mjs"
+    "watch_quarto": "rollup -w -c rollup_quarto.config.mjs",
+    "build_test": "rollup -c rollup_test.config.mjs",
+    "watch_test": "rollup -w -c rollup_test.config.mjs"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "canvas": "^2.11.2",
+    "gl": "^6.0.2",
+    "jsdom": "^22.0.0",
+    "uuid": "^9.0.0",
     "web-ifc-viewer": "^1.0.214"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.0.2",
-    "rollup": "^3.20.2"
+    "rollup": "^3.21.5"
   }
 }
