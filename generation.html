@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Recreation of the original IfcOpenHouse with the IfcOpenShell Python API">
+
+<title>ifcopenhouse - Step-by-step tutorial</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="ifcopenhouse - Step-by-step tutorial">
+<meta property="og:description" content="Recreation of the original IfcOpenHouse with the IfcOpenShell Python API">
+<meta property="og:image" content="https://cvillagrasa.github.io/IfcOpenHouse/static/generation_samples.png">
+<meta property="og:site-name" content="ifcopenhouse">
+<meta property="og:image:height" content="1467">
+<meta property="og:image:width" content="4362">
+<meta name="twitter:title" content="ifcopenhouse - Step-by-step tutorial">
+<meta name="twitter:description" content="Recreation of the original IfcOpenHouse with the IfcOpenShell Python API">
+<meta name="twitter:image" content="https://cvillagrasa.github.io/IfcOpenHouse/static/generation_samples.png">
+<meta name="twitter:image-height" content="1467">
+<meta name="twitter:image-width" content="4362">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">ifcopenhouse</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools ms-auto">
+</div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./generation.html">Step-by-step tutorial</a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">IfcOpenHouse</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./generation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Step-by-step tutorial</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#necessary-imports" id="toc-necessary-imports" class="nav-link active" data-scroll-target="#necessary-imports">Necessary imports</a></li>
+  <li><a href="#definition-of-project-data" id="toc-definition-of-project-data" class="nav-link" data-scroll-target="#definition-of-project-data">Definition of project data</a></li>
+  <li><a href="#setting-up-a-project" id="toc-setting-up-a-project" class="nav-link" data-scroll-target="#setting-up-a-project">Setting up a project</a></li>
+  <li><a href="#optional-definition-of-owner-data" id="toc-optional-definition-of-owner-data" class="nav-link" data-scroll-target="#optional-definition-of-owner-data">Optional definition of owner data</a></li>
+  <li><a href="#setting-up-the-project-spatial-structure" id="toc-setting-up-the-project-spatial-structure" class="nav-link" data-scroll-target="#setting-up-the-project-spatial-structure">Setting up the project spatial structure</a></li>
+  <li><a href="#creating-our-first-wall" id="toc-creating-our-first-wall" class="nav-link" data-scroll-target="#creating-our-first-wall">Creating our first wall</a></li>
+  <li><a href="#creating-a-footing" id="toc-creating-a-footing" class="nav-link" data-scroll-target="#creating-a-footing">Creating a footing</a></li>
+  <li><a href="#voiding-the-walls-with-window-openings" id="toc-voiding-the-walls-with-window-openings" class="nav-link" data-scroll-target="#voiding-the-walls-with-window-openings">Voiding the walls with window openings</a></li>
+  <li><a href="#creating-the-roof" id="toc-creating-the-roof" class="nav-link" data-scroll-target="#creating-the-roof">Creating the roof</a></li>
+  <li><a href="#creating-the-remaining-walls" id="toc-creating-the-remaining-walls" class="nav-link" data-scroll-target="#creating-the-remaining-walls">Creating the remaining walls</a></li>
+  <li><a href="#creating-the-terrain-as-a-nurbs-surface" id="toc-creating-the-terrain-as-a-nurbs-surface" class="nav-link" data-scroll-target="#creating-the-terrain-as-a-nurbs-surface">Creating the terrain as a NURBS surface</a></li>
+  <li><a href="#creation-of-material-layer-sets" id="toc-creation-of-material-layer-sets" class="nav-link" data-scroll-target="#creation-of-material-layer-sets">Creation of material layer sets</a></li>
+  <li><a href="#creation-of-a-stair-flight" id="toc-creation-of-a-stair-flight" class="nav-link" data-scroll-target="#creation-of-a-stair-flight">Creation of a stair flight</a></li>
+  <li><a href="#the-house-needs-a-door" id="toc-the-house-needs-a-door" class="nav-link" data-scroll-target="#the-house-needs-a-door">The house needs a door…</a></li>
+  <li><a href="#and-some-windows" id="toc-and-some-windows" class="nav-link" data-scroll-target="#and-some-windows">… and some windows</a></li>
+  <li><a href="#checking-the-validity-of-our-file" id="toc-checking-the-validity-of-our-file" class="nav-link" data-scroll-target="#checking-the-validity-of-our-file">Checking the validity of our file</a></li>
+  <li><a href="#visualization-with-ifc.js" id="toc-visualization-with-ifc.js" class="nav-link" data-scroll-target="#visualization-with-ifc.js">Visualization with IFC.js</a></li>
+  <li><a href="#saving-our-ifc-file" id="toc-saving-our-ifc-file" class="nav-link" data-scroll-target="#saving-our-ifc-file">Saving our IFC file</a></li>
+  <li><a href="#known-missing-features" id="toc-known-missing-features" class="nav-link" data-scroll-target="#known-missing-features">Known missing features</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/cvillagrasa/IfcOpenHouse/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Step-by-step tutorial</h1>
+</div>
+
+<div>
+  <div class="description">
+    Recreation of the original IfcOpenHouse with the IfcOpenShell Python API
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<!-- This is where a canvas with an IFC.js visualisation of the model
+    will be placed within the Quarto website -->
+<div class="info-panel hidden" id="id-info-div">
+    <p class="info" id="id-info-p"></p>
+</div>
+<div id="ifcjs-container">
+</div>
+<p><br>
+</p>
+<p>Welcome to this step-by-step tutorial on how to build a parametric house 🏠 from scratch in IFC with <a href="https://ifcopenshell.org/">IfcOpenShell</a> 🐚. Before getting started, you may want to pass by the <a href="./index.html">home page</a>, in case you still haven’t. There, you’ll find a general description about the tools 🛠️ being used, installation instructions, as well as links to the original IfcOpenHouse project in C++, by Thomas Krijnen.</p>
+<p>Note that this is a static website version of a Jupyter 🪐 Notebook 📒, optimized for readability and ease of access. If you wish to run the code, refer to <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/nbs/00_generation.ipynb">the notebook itself</a>, or alternatively you can always clone <a href="https://github.com/cvillagrasa/IfcOpenHouse">the repository</a>.</p>
+<p>This project relies on <a href="https://nbdev.fast.ai/">nbdev</a> to fully integrate code and documentation from inside Jupyter Notebooks. However, if notebooks are not your thing and you just prefer pure Python 🐍, there’s also <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/IfcOpenHouse/core.py">an autogenerated script</a>.</p>
+<p>Lastly, you may want to play a bit and navigate through the <a href="https://ifcjs.github.io/info/">IFC.js</a> preview of the house above these lines. Double click an element to gather entity info from the underlying IFC. Throughout this tutorial, you’ll learn how to create each one of those elements and produce a valid IFC 🚀.</p>
+<section id="necessary-imports" class="level2">
+<h2 class="anchored" data-anchor-id="necessary-imports">Necessary imports</h2>
+<p>The following commands import most of the necessary libraries 📚 for this project. There’s also an <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/IfcOpenHouse/ios_utils.py"><code>ios_utils</code></a> module with some code placed into a separate *.py file, so as to focus on the important bits within this notebook. Feel free to also consult its content as an extra task, if desired. Open Cascade is not imported by default, since its usage will depend on the chosen method for the terrain creation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> defaultdict</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mathutils <span class="im">import</span> Vector</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.api</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.api.owner</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.api.owner.settings</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.api.material</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.api.geometry</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ifcopenshell.validate</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IfcOpenHouse.ios_utils <span class="im">import</span> (</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    IfcOpenShellPythonAPI, placement_matrix, clipping, ColourRGB, TerrainBuildMethod, </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    build_native_bspline_terrain, build_tesselated_occ_terrain, ios_entity_overwrite_hook</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No stream support: No module named 'lark'</code></pre>
+</div>
+</div>
+</section>
+<section id="definition-of-project-data" class="level2">
+<h2 class="anchored" data-anchor-id="definition-of-project-data">Definition of project data</h2>
+<p>The following information defines input data for the house creation. Note that it can be modified conveniently to parametrically reconstruct our IFC model. After such modification, remember to run again 🏃‍♀️🏃 any cell depending on the modified parameters.</p>
+<p>Furthermore, without requiring any action from your side, any IFC-related overwritten variable will be automatically garbage-collected 🗑️ by means of an audit hook (see next section).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data definition</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>project_name <span class="op">=</span> <span class="st">'IFC Open House'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>author_details <span class="op">=</span> {<span class="st">'given_name'</span>: <span class="st">'Carlos'</span>, <span class="st">'family_name'</span>: <span class="st">'V'</span>, <span class="st">'identification'</span>: <span class="st">'CV'</span>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>author_role <span class="op">=</span> <span class="st">'CIVILENGINEER'</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>organization_details <span class="op">=</span> {<span class="st">'name'</span>: <span class="st">'OSArch'</span>, <span class="st">'identification'</span>: <span class="st">'OSArch'</span>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>site_name, building_name, storey_name <span class="op">=</span> <span class="st">'OSArch Land'</span>, <span class="st">'Open house'</span>, <span class="st">'Ground floor'</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># All dimensions in meters</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>storey_size <span class="op">=</span> Vector([<span class="fl">10.</span>, <span class="fl">5.</span>, <span class="fl">3.</span>])</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>wall_thickness <span class="op">=</span> <span class="fl">0.36</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>footing_ledge <span class="op">=</span> <span class="fl">0.05</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>footing_size <span class="op">=</span> Vector([</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    storey_size.x <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> (wall_thickness <span class="op">+</span> footing_ledge),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    storey_size.y <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> (wall_thickness <span class="op">+</span> footing_ledge),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="fl">2.</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>roof_ledge <span class="op">=</span> Vector([<span class="fl">0.1</span>, <span class="fl">0.22</span>])</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>roof_thickness <span class="op">=</span> <span class="fl">0.36</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>roof_angle <span class="op">=</span> <span class="fl">45.</span> <span class="co"># degrees</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>roof_angle_sin <span class="op">=</span> <span class="bu">float</span>(np.sin(roof_angle <span class="op">*</span> np.pi<span class="op">/</span><span class="dv">180</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>roof_angle_cos <span class="op">=</span> <span class="bu">float</span>(np.cos(roof_angle <span class="op">*</span> np.pi<span class="op">/</span><span class="dv">180</span>))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>roof_height <span class="op">=</span> <span class="bu">float</span>(</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    (storey_size.y <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> wall_thickness <span class="op">+</span> roof_ledge.y) <span class="op">*</span> np.tan(roof_angle <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">180</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>roof_size <span class="op">=</span> Vector([</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    storey_size.x <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> (wall_thickness <span class="op">+</span> roof_ledge.x),</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    storey_size.y <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> (wall_thickness <span class="op">+</span> roof_ledge.y),</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    roof_height</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>door_horizontal_offset <span class="op">=</span> <span class="fl">1.6</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>window_base_height <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>right_window_horizontal_offset <span class="op">=</span> <span class="fl">2.</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>stair_width <span class="op">=</span> <span class="fl">1.2</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Colours for surface styles</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>wall_colour <span class="op">=</span> ColourRGB(<span class="fl">.75</span>, <span class="fl">0.73</span>, <span class="fl">0.68</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>footing_colour <span class="op">=</span> ColourRGB(<span class="fl">.38</span>, <span class="fl">0.4</span>, <span class="fl">0.42</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>roof_colour <span class="op">=</span> ColourRGB(<span class="fl">.24</span>, <span class="fl">0.08</span>, <span class="fl">0.04</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>terrain_colour <span class="op">=</span> ColourRGB(<span class="fl">.15</span>, <span class="fl">0.25</span>, <span class="fl">0.05</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>door_colour <span class="op">=</span> ColourRGB(<span class="fl">.8</span>, <span class="fl">.8</span>, <span class="fl">.8</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>window_colour <span class="op">=</span> ColourRGB(<span class="fl">.5</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, transparency<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>stair_colour <span class="op">=</span> ColourRGB(<span class="fl">.45</span>, <span class="fl">0.47</span>, <span class="fl">0.56</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Choice of terrain building method. Use NONE if unsure about the viewer capabilities.   </span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>terrain_build_method <span class="op">=</span> TerrainBuildMethod.TESSELATE_OCC_SHAPE</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Door and window geometric info is defined in a separate file due to its complexity</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IfcOpenHouse.opening_data <span class="im">import</span> door_params, single_window_params, triple_window_params</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="setting-up-a-project" class="level2">
+<h2 class="anchored" data-anchor-id="setting-up-a-project">Setting up a project</h2>
+<p>Everything is ready to start using IfcOpenShell 🐚. So without further ado, let’s get down to business 👩‍🏭:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Little trickery to ease the use of the ifcopenshell.api when scripting</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ios <span class="op">=</span> IfcOpenShellPythonAPI()  <span class="co">#q1: thoughts about a data-scientish "import ifcopenshell.api as ios"?</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># standard use      -&gt; ifcopenshell.api.run('root.create_entity', file, ifc_class='IfcWall')</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># with the trickery -&gt; ios.root.create_entity(file, ifc_class='IfcWall')</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># It will reduce the overall string overhead, as well as the length of the API calls</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># However, it will not help with static typing autocomplete and help</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Bear in mind that currently, this is not a canonical use of IfcOpenShell</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Setting up the project</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span> <span class="op">=</span> ios.project.create_file(version<span class="op">=</span><span class="st">'IFC4'</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Don't use 2X3 in 2023! It's terribly outdated and lacks many useful classes. This simple</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># project uses many &gt;=IFC4 features, and hence selecting 'IFC2X3' here would only lead to issues.</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Pending to use 4x3 (much better docs) when ios defaults to IFC4X3_TC1 and IFC.js supports it</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>project <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcProject'</span>, name<span class="op">=</span>project_name)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>ios.project.assign_declaration(<span class="bu">file</span>, definition<span class="op">=</span>project, relating_context<span class="op">=</span>project)  <span class="co">#q2: from my ignorance, is this necessary?</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ios.unit.assign_unit(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, length<span class="op">=</span>{<span class="st">'is_metric'</span>: <span class="va">True</span>, <span class="st">'raw'</span>: <span class="st">'METERS'</span>}, area<span class="op">=</span>{<span class="st">'is_metric'</span>: <span class="va">True</span>, <span class="st">'raw'</span>: <span class="st">'METERS'</span>},</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    volume<span class="op">=</span>{<span class="st">'is_metric'</span>: <span class="va">True</span>, <span class="st">'raw'</span>: <span class="st">'METERS'</span>}</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> ios.context.add_context(<span class="bu">file</span>, context_type<span class="op">=</span><span class="st">'Model'</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>body <span class="op">=</span> ios.context.add_context(  <span class="co">#q3: isn't this screaming for "context.add_subcontext"? also, context_type may be redundant</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context_type<span class="op">=</span><span class="st">'Model'</span>, context_identifier<span class="op">=</span><span class="st">'Body'</span>, target_view<span class="op">=</span><span class="st">'MODEL_VIEW'</span>, parent<span class="op">=</span>ctx</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co"># We allow for live overwriting of IfcOpenShell entities within the notebook environment</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Only use this sorcery when experimenting in Jupyter Notebooks, never in production</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>sys.addaudithook(</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    ios_entity_overwrite_hook(<span class="bu">file</span>, sys.modules[<span class="va">__name__</span>], do_not_delete<span class="op">=</span>[project, ctx, body])</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok, we just got started! The <code>file</code> object 📁 we just created will be the main binding agent for the rest of the notebook. As it can be seen, most API calls are self-explanatory. In order to look up for the most updated documentation, check out the following links:</p>
+<p><a href="https://blenderbim.org/docs-python/autoapi/ifcopenshell/api/index.html">https://blenderbim.org/docs-python/autoapi/ifcopenshell/api/index.html</a></p>
+<p><a href="https://blenderbim.org/docs-python/ifcopenshell-python/code_examples.html">https://blenderbim.org/docs-python/ifcopenshell-python/code_examples.html</a></p>
+<p>In case you might also want to have a look at the Python source code, this is the place to go:</p>
+<p><a href="https://github.com/IfcOpenShell/IfcOpenShell/tree/v0.7.0/src/ifcopenshell-python/ifcopenshell/api">https://github.com/IfcOpenShell/IfcOpenShell/tree/v0.7.0/src/ifcopenshell-python/ifcopenshell/api</a></p>
+</section>
+<section id="optional-definition-of-owner-data" class="level2">
+<h2 class="anchored" data-anchor-id="optional-definition-of-owner-data">Optional definition of owner data</h2>
+<p>IFCs can hold data from stakeholders, like a person 🤓 or an organisation 👥. With the last two lines, we’re assigning the user here defined to the rest of the IfcOpenShell API actions taken from now on, as well as IfcOpenShell as the application.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>application <span class="op">=</span> ios.owner.add_application(<span class="bu">file</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>person <span class="op">=</span> ios.owner.add_person(<span class="bu">file</span>, <span class="op">**</span>author_details)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>organisation <span class="op">=</span> ios.owner.add_organisation(<span class="bu">file</span>, <span class="op">**</span>organization_details)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>user <span class="op">=</span> ios.owner.add_person_and_organisation(<span class="bu">file</span>, person<span class="op">=</span>person, organisation<span class="op">=</span>organisation)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ios.owner.add_role(<span class="bu">file</span>, assigned_object<span class="op">=</span>organisation, role<span class="op">=</span>author_role)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>actor <span class="op">=</span> ios.owner.add_actor(<span class="bu">file</span>, actor<span class="op">=</span>user)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>ifcopenshell.api.owner.settings.get_user <span class="op">=</span> <span class="kw">lambda</span> x: user</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ifcopenshell.api.owner.settings.get_application <span class="op">=</span> <span class="kw">lambda</span> x: application</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="setting-up-the-project-spatial-structure" class="level2">
+<h2 class="anchored" data-anchor-id="setting-up-the-project-spatial-structure">Setting up the project spatial structure</h2>
+<p>That’s how we define an outline of a site 🏘️, containing a building 🏠, which in turn contains a building storey 🛋️:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>site <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcSite'</span>, name<span class="op">=</span>site_name)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ios.aggregate.assign_object(<span class="bu">file</span>, product<span class="op">=</span>site, relating_object<span class="op">=</span>project)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>building <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcBuilding'</span>, name<span class="op">=</span>building_name)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ios.aggregate.assign_object(<span class="bu">file</span>, product<span class="op">=</span>building, relating_object<span class="op">=</span>site)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>storey <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcBuildingStorey'</span>, name<span class="op">=</span>storey_name)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>ios.aggregate.assign_object(<span class="bu">file</span>, product<span class="op">=</span>storey, relating_object<span class="op">=</span>building)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Property Sets ✍️ can be easily added with <code>pset.add_pset</code> and <code>pset_edit_pset</code>. Here, we set the total area of the site to 20x20 = 400 m2.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pset_site_common <span class="op">=</span> ios.pset.add_pset(<span class="bu">file</span>, product<span class="op">=</span>site, name<span class="op">=</span><span class="st">'Pset_SiteCommon'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ios.pset.edit_pset(<span class="bu">file</span>, pset<span class="op">=</span>pset_site_common, properties<span class="op">=</span>{<span class="st">'TotalArea'</span>: <span class="fl">400.</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-our-first-wall" class="level2">
+<h2 class="anchored" data-anchor-id="creating-our-first-wall">Creating our first wall</h2>
+<p>The following statement will create a brand new wall entity 🧱🧱 within our IFC file 📁:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>south_wall <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWall'</span>, name<span class="op">=</span><span class="st">'South wall'</span>, predefined_type<span class="op">=</span><span class="st">'SOLIDWALL'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>As expected, IfcOpenShell 🐚 is tightly coupled to the underlying IFC Schema. Hence, opening a browser tab with the <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3_0_0/toc.html">IFC official documentation</a> is not at all a bad idea when using it.</p>
+<ul>
+<li><strong>PRO TIP</strong> 👉 IFC4X3 docs are far better than previous versions!</li>
+</ul>
+<p>Don’t be scared of the bSI documentation! 👻 If you’ve reached this point already, you’re very close to turbocharge 🚀 your IfcOpenShell coding skills 👩🏽‍💻 by relying on the underlying IFC schema.</p>
+<p>In order to better illustrate it with our new wall 🧱🧱, let’s consider the following. If we want to know among which predefined types we can choose for a certain IfcWall, going to <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3_0_0/lexical/IfcWall.htm">its documentation page</a>, scrolling to “Predefined Type”, and clicking into <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3_0_0/lexical/IfcWallTypeEnum.htm">IfcWallTypeEnum</a> will give us the appropriate list: MOVABLE, PARAPET, PARTITIONING, PLUMBINGWALL, RETAININGWALL, SHEAR, SOLIDWALL and WAVEWALL.</p>
+<p>Clearly, our traditional structural wall for the house needs to be classified as a SOLIDWALL. As always in IFC, a predefined type could also be set as USERDEFINED if none of the enumeration options fits our use case, in which case we could monkey-patch 🐵 the type as <code>south_wall.ObjectType = 'CUSTOM TYPE'</code>.</p>
+<p>The previous kind of reasoning and consulting of the documentation is to be followed for the rest of this notebook. In case that at some point we needed to know which IFC class a certain IfcOpenShell 🐚 entity corresponds to (so as to know where in the IFC documentation to look at), the <code>is_a()</code> method will give us the answer:</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>south_wall.is_a()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>'IfcWall'</code></pre>
+</div>
+</div>
+<p>This notebook environment 📒 highly encourages experimentation 👨‍🔬, like in the statement above. Feel free to add a new cell at any point to further explore the newly created variables. Another very useful method is <code>get_info()</code>, which returns a dictionary with all the entity attributes:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>south_wall.get_info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>{'id': 41,
+ 'type': 'IfcWall',
+ 'GlobalId': '1LXtQ1Bub30gLlLbSNcmg8',
+ 'OwnerHistory': #40=IfcOwnerHistory(#19,#16,.READWRITE.,.ADDED.,1695242677,#19,#16,1695242677),
+ 'Name': 'South wall',
+ 'Description': None,
+ 'ObjectType': None,
+ 'ObjectPlacement': None,
+ 'Representation': None,
+ 'Tag': None,
+ 'PredefinedType': 'SOLIDWALL'}</code></pre>
+</div>
+</div>
+<p>As seen previously with user defined types, entity attributes can be easily <a href="https://en.wikipedia.org/wiki/Monkey_patch">monkey-patched</a> 🐵 (we’re in Python after all! 🐍). It will work if the attribute exists in the corresponding IFC Schema. For instance, if we wanted to set the “Description” of our wall, we would do it as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>south_wall.Description <span class="op">=</span> <span class="st">'This is my first wall with the IfcOpenShell Python API!'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In any case, the IfcOpenShell Python API 🐚 takes care of most low level tasks. Actions like the generation of global IDs, the assignment of owner history to entities or the setup of entity relationships for geometric representations or placements are already dealt with automatically 👌🏻.</p>
+<p>Now, let’s assign the wall to the ground floor storey by means of <code>spatial.assign_container</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>south_wall, relating_structure<span class="op">=</span>storey)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It’s important to keep in mind the IFC distinction between geometry and semantics. Up to now, we’ve created an IfcWall entity 🧱🧱, only containing a name and a predefined type. However, the geometric representations of the actual wall will exist within their own IfcShapeRepresentation entity 🗿. That is to say, one thing is the creation of the IfcWall, but then its geometry needs to be created as a separate IFC class, which in turn will be linked to the former.</p>
+<p>The API call <code>geometry.add_wall_representation</code> generates a swept solid (IfcExtrudedAreaSolid), an implicit geometry representation which requires less memory 🪶 than explicit BREPS or tesselated representations. You should know that IFC supports all of them 🚀, among other fancy paradigms like Constructive Solid Geometry or BSplines. All in all, for the typical walls/slabs or beams/columns typically used in the AEC field, an IfcExtrudedAreaSolid is difficult to beat, and that’s why the IfcOpenShell API 🐚 defaults to it. You don’t necessarily need to be aware of the low level definition of a wall geometry, but just let the library do the job for you 😎.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>south_wall_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>storey_size.x <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> wall_thickness, height<span class="op">=</span>storey_size.z, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    thickness<span class="op">=</span>wall_thickness</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>south_wall, representation<span class="op">=</span>south_wall_representation)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>south_wall, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        [<span class="op">-</span>storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness, <span class="op">-</span>wall_thickness <span class="op">/</span> <span class="dv">2</span>, <span class="fl">0.</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span>  <span class="co">#q4: why a matrix if Y is going to be ignored? why not just pass the placement coords + optionals x_local, z_local and scale?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Placements are assigned to a product (IfcProduct), which in IFC is anything existing within the physical space 🛰️, like a wall, but also an annotation or a spatial element.</p>
+<p>Now, let’s add a surface style in order to assign a colour to the wall representation. If eager to learn more about styles and colour in IFC, there’s an in-depth explanation by Dion Moult <a href="https://community.osarch.org/discussion/comment/13744/#Comment_13744">in this link</a>, highly recommended 🔝. Alternatively, you may also check out the <a href="https://blenderbim.org/docs-python/autoapi/ifcopenshell/api/style/add_surface_style/index.html">API docs</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>wall_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>wall_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>wall_colour.info</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>south_wall_representation, styles<span class="op">=</span>[wall_style]</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-a-footing" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-footing">Creating a footing</h2>
+<p>Let’s repeat the same process again 🔁 to create the structural footing 🦶. Creation of the element entity (an IfcElement is just a tangible IfcProduct, like a wall or a footing, but not an annotation or an IfcBuildingStorey), assignation of the storey, creation of the swept solid representation, linkage 🔗 to the element, setting of the placement and addition of a surface style:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>footing <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcFooting'</span>, name<span class="op">=</span><span class="st">'Footing'</span>, predefined_type<span class="op">=</span><span class="st">'STRIP_FOOTING'</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>footing, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>footing_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>footing_size.x, height<span class="op">=</span>footing_size.z, thickness<span class="op">=</span>footing_size.y</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>footing, representation<span class="op">=</span>footing_representation)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>footing, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        [<span class="op">-</span>footing_size.x<span class="op">/</span><span class="dv">2</span>, <span class="op">-</span>wall_thickness<span class="op">/</span><span class="dv">2</span> <span class="op">-</span> footing_ledge, <span class="op">-</span>footing_size.z]</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>footing_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>footing_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>footing_colour.info</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>footing_representation, styles<span class="op">=</span>[footing_style]</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="voiding-the-walls-with-window-openings" class="level2">
+<h2 class="anchored" data-anchor-id="voiding-the-walls-with-window-openings">Voiding the walls with window openings</h2>
+<p>The IfcOpenShell API 🐚 also provides utilities to void elements 🕳️. An IFC representation is needed, which will correspond to an opening that will void another element. It is important to note that in accordance with the schema specs, each opening can only void one single element.</p>
+<p>When defining the geometric representation of the voids, it is advisable to make them deeper than the element they’re voiding (along its perpendicular axis). If they measured exactly the same, computer intrinsic floating point error could leave a thin layer without voiding 🙅‍♂️.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>west_void_margin <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>west_opening <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcOpeningElement'</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>west_opening_width <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> single_window_params[<span class="st">'overall_width'</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>wo_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    length<span class="op">=</span>triple_window_params[<span class="st">'overall_width'</span>] <span class="op">+</span> west_void_margin, </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span>triple_window_params[<span class="st">'overall_height'</span>],</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    thickness<span class="op">=</span>west_opening_width</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>west_opening, representation<span class="op">=</span>wo_representation)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>west_opening_coords <span class="op">=</span> [</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">-</span>storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness <span class="op">-</span> west_void_margin </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> single_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningOffset'</span>]</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">-</span>west_opening_width <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness <span class="op">/</span> <span class="dv">3</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> triple_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningOffset'</span>] </span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">+</span> triple_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningDepth'</span>]</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    ), </span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    window_base_height</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>west_opening, matrix<span class="op">=</span>placement_matrix(west_opening_coords)</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>ios.void.add_opening(<span class="bu">file</span>, opening<span class="op">=</span>west_opening, element<span class="op">=</span>south_wall)</span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>south_opening <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcOpeningElement'</span>)</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>south_opening_width <span class="op">=</span> <span class="fl">3.</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>so_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>single_window_params[<span class="st">'overall_width'</span>], </span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span>single_window_params[<span class="st">'overall_height'</span>], thickness<span class="op">=</span>south_opening_width</span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>south_opening, representation<span class="op">=</span>so_representation)</span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>south_opening, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>        [right_window_horizontal_offset, <span class="op">-</span>south_opening_width <span class="op">/</span> <span class="dv">2</span>, window_base_height]</span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>ios.void.add_opening(<span class="bu">file</span>, opening<span class="op">=</span>south_opening, element<span class="op">=</span>south_wall)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-the-roof" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-roof">Creating the roof</h2>
+<p>The gable roof 🛖 consists of two slabs, which will be aggregated into the roof entity. Since both slabs are identical, except for rotation and mirroring operations 🪞, their IfcSlab entities will point to identical representations, though with different placements. These representations will be again an IfcExtrudedAreaSolid, created by <code>add_wall_representation</code>, but in this case the extruded direction will be at a certain angle. That way, the slab prism won’t have its faces perpendicular to each other, which better suits a gable roof geometry.</p>
+<p>Local axes are set by the calls to <code>geometry.edit_object_placement</code>, with a local Z equivalent to global Y. That effectively rotates the representation by 90º so that its previously horizontal “base” and “top” now become vertical. Lastly, north-side slab is also mirrored along the X axis, so that both slabs are facing each other and the gable roof is successfully constructed 👌🏻.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>roof <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcRoof'</span>, name<span class="op">=</span><span class="st">'Roof'</span>, predefined_type<span class="op">=</span><span class="st">'GABLE_ROOF'</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>roof, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>roof_representation_south <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>roof_size.x, height<span class="op">=</span>roof_size.y <span class="op">/</span> <span class="dv">2</span>, thickness<span class="op">=</span>roof_thickness, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    x_angle<span class="op">=</span>(roof_angle) <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">180</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>roof_representation_north <span class="op">=</span> ifcopenshell.util.element.copy_deep(<span class="bu">file</span>, roof_representation_south)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#q5: add_slab_representation doesn't accept width and depth? isn't it strange calling it add_wall</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#if we're using it for everything? do "add_wall_representation", "add_slab_representation" and </span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#"add_profile_representation" add all of them an IfcExtrudedAreaSolid? Would it make any sense to </span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#add a single "add_extruded_representation" instead? As a higher level API call than shape_builder</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>roof_downward_offset <span class="op">=</span> (roof_ledge.y <span class="op">+</span> wall_thickness <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> np.tan(roof_angle <span class="op">*</span> np.pi <span class="op">/</span> <span class="dv">180</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>south_roof <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcSlab'</span>, name<span class="op">=</span><span class="st">'South roof'</span>, predefined_type<span class="op">=</span><span class="st">'ROOF'</span>)</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>south_roof, representation<span class="op">=</span>roof_representation_south)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>south_roof, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        [roof_size.x <span class="op">/</span> <span class="dv">2</span>, <span class="op">-</span>roof_ledge.y <span class="op">-</span> wall_thickness <span class="op">/</span> <span class="dv">2</span>, storey_size.z <span class="op">-</span> roof_downward_offset], </span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>        x_local<span class="op">=</span>[<span class="op">-</span><span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], z_local<span class="op">=</span>[<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>north_roof <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcSlab'</span>, name<span class="op">=</span><span class="st">'North roof'</span>, predefined_type<span class="op">=</span><span class="st">'ROOF'</span>)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>north_roof, representation<span class="op">=</span>roof_representation_north)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>north_roof, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">-</span>roof_size.x <span class="op">/</span> <span class="dv">2</span>, </span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>            (storey_size.y <span class="op">+</span> wall_thickness) <span class="op">/</span> <span class="dv">2</span>, </span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>            storey_size.z <span class="op">-</span> roof_downward_offset <span class="op">+</span> roof_size.z <span class="op">+</span> roof_thickness <span class="op">/</span> roof_angle_cos</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>        ], x_local<span class="op">=</span>[<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], z_local<span class="op">=</span>[<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>ios.aggregate.assign_object(<span class="bu">file</span>, product<span class="op">=</span>south_roof, relating_object<span class="op">=</span>roof)</span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>ios.aggregate.assign_object(<span class="bu">file</span>, product<span class="op">=</span>north_roof, relating_object<span class="op">=</span>roof)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>roof_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>roof_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>roof_colour.info</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>roof_representation_south, styles<span class="op">=</span>[roof_style]</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>roof_representation_north, styles<span class="op">=</span>[roof_style]</span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-the-remaining-walls" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-remaining-walls">Creating the remaining walls</h2>
+<p>Since both geometries are identical, we can duplicate the existing south wall representation into a new northern side wall 🧱🧱. Again, the placement will position the new representation in the relevant coordinates.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>north_wall_representation <span class="op">=</span> ifcopenshell.util.element.copy_deep(<span class="bu">file</span>, south_wall_representation)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>north_wall <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWall'</span>, name<span class="op">=</span><span class="st">'North wall'</span>, predefined_type<span class="op">=</span><span class="st">'SOLIDWALL'</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>north_wall, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>north_wall, representation<span class="op">=</span>north_wall_representation)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>north_wall, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        [<span class="op">-</span>storey_size.x<span class="op">/</span><span class="dv">2</span> <span class="op">-</span> wall_thickness, storey_size.y <span class="op">+</span> wall_thickness <span class="op">/</span> <span class="dv">2</span>, <span class="fl">0.</span>]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>north_wall_representation, styles<span class="op">=</span>[wall_style]</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A new east wall entity is added, along with its representation. This time, though, the geometry is not just an extruded rectangle, but due to the gable roof shape, a pair of clipping operations 🖇️ need to be performed on top. The IfcOpenShell API 🐚 easily allows us to do so by passing some planes with the <code>clippings</code> argument to <code>add_wall_representation</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>east_wall <span class="op">=</span> ios.root.create_entity(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWall'</span>, name<span class="op">=</span><span class="st">'East wall'</span>, predefined_type<span class="op">=</span><span class="st">'SOLIDWALL'</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>east_wall, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>south_roof_clipping <span class="op">=</span> clipping(</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">0.</span>, wall_thickness <span class="op">/</span> <span class="dv">2</span>, storey_size.z], x_dir<span class="op">=</span>[<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    z_dir<span class="op">=</span>[<span class="fl">0.</span>, <span class="op">-</span>roof_angle_sin, roof_angle_cos]</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>north_roof_clipping <span class="op">=</span> clipping(</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    [<span class="fl">0.</span>, storey_size.y <span class="op">+</span> <span class="dv">3</span> <span class="op">/</span> <span class="dv">2</span> <span class="op">*</span> wall_thickness, storey_size.z], x_dir<span class="op">=</span>[<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="fl">0.</span>], </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    z_dir<span class="op">=</span>[<span class="fl">0.</span>, roof_angle_sin, roof_angle_cos]</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>east_wall_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>wall_thickness, height<span class="op">=</span>storey_size.z <span class="op">+</span> roof_size.z, </span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    thickness<span class="op">=</span>storey_size.y <span class="op">+</span> <span class="dv">2</span> <span class="op">*</span> wall_thickness, clippings<span class="op">=</span>[south_roof_clipping, north_roof_clipping]</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>east_wall, representation<span class="op">=</span>east_wall_representation)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>east_wall, matrix<span class="op">=</span>placement_matrix([storey_size.x <span class="op">/</span> <span class="dv">2</span>, <span class="op">-</span>wall_thickness <span class="op">/</span> <span class="dv">2</span>, <span class="fl">0.</span>])</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>east_wall_representation, styles<span class="op">=</span>[wall_style]</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The methodology of duplicating a representation is is once more time 🔁 followed for the remaining wall, and an opening 🕳️ is defined on it. Analogously, the opening is exactly equal to the previously defined <code>west_opening</code>. However, since in IFC, an opening can only be used to create a single void within a single element, a new identical opening entity is created.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>west_wall <span class="op">=</span> ios.root.create_entity(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWall'</span>, name<span class="op">=</span><span class="st">'West wall'</span>, predefined_type<span class="op">=</span><span class="st">'SOLIDWALL'</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>west_wall, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>west_wall_representation <span class="op">=</span> ifcopenshell.util.element.copy_deep(<span class="bu">file</span>, east_wall_representation)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>west_wall, representation<span class="op">=</span>west_wall_representation)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>west_wall, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        [<span class="op">-</span>storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness, <span class="op">-</span>wall_thickness <span class="op">/</span> <span class="dv">2</span>, <span class="fl">0.</span>]</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>west_opening_copy <span class="op">=</span> ifcopenshell.util.element.copy_deep(<span class="bu">file</span>, west_opening)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>west_opening_copy, matrix<span class="op">=</span>placement_matrix(west_opening_coords)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>ios.void.add_opening(<span class="bu">file</span>, opening<span class="op">=</span>west_opening_copy, element<span class="op">=</span>west_wall)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>west_wall_representation, styles<span class="op">=</span>[wall_style]</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also indicate that walls 🧱🧱 are connected 🔗 between each other by means of <code>geometry.connect_path</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>connection_args <span class="op">=</span> {<span class="st">'relating_connection'</span>: <span class="st">'ATEND'</span>, <span class="st">'related_connection'</span>: <span class="st">'ATSTART'</span>}</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>rel_connect_paths <span class="op">=</span> [</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    ios.geometry.connect_path(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, relating_element<span class="op">=</span>south_wall, related_element<span class="op">=</span>east_wall, <span class="op">**</span>connection_args</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    ios.geometry.connect_path(</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, relating_element<span class="op">=</span>east_wall, related_element<span class="op">=</span>north_wall, <span class="op">**</span>connection_args</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    ios.geometry.connect_path(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, relating_element<span class="op">=</span>north_wall, related_element<span class="op">=</span>west_wall, <span class="op">**</span>connection_args</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    ios.geometry.connect_path(</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, relating_element<span class="op">=</span>west_wall, related_element<span class="op">=</span>south_wall, <span class="op">**</span>connection_args</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co">#q7: do IfcRelConnectsPathElements with ConnectionGeometry work in any viewer? is this done like this?</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Original IfcOpenHouse had half a wall thickness less of extension per wall end, I bet it's better for</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co"># qto's, but how is the way to properly make connections and to have a proper viz of them in IFC?</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>point_list <span class="op">=</span> <span class="bu">file</span>.create_entity(<span class="st">'IfcCartesianPointList2D'</span>, CoordList <span class="op">=</span> [[<span class="op">-</span><span class="fl">1.</span>, <span class="op">-</span><span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">1.</span>]])</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>curve_on_relating <span class="op">=</span> <span class="bu">file</span>.create_entity(<span class="st">'IfcIndexedPolyCurve'</span>, Points<span class="op">=</span>point_list)</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>connection_curve <span class="op">=</span> <span class="bu">file</span>.create_entity(</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">'IfcConnectionCurveGeometry'</span>, CurveOnRelatingElement<span class="op">=</span>curve_on_relating</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> rel_connect_paths:</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    path.ConnectionGeometry <span class="op">=</span> connection_curve</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creating-the-terrain-as-a-nurbs-surface" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-terrain-as-a-nurbs-surface">Creating the terrain as a NURBS surface</h2>
+<p>This section reproduces the terrain of the original IfcOpenHouse 🏡, defined by a NURBS surface ⛰️. The variable <code>terrain_build_method</code> can be set to one of three enum values:</p>
+<ul>
+<li><code>TerrainBuildMethod.NATIVE_BSPLINE</code>: Uses an <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3_0_0/lexical/IfcAdvancedBrep.htm">advanced BREP</a> with the native IfcBSplineSurfaceWithKnots entity, existing from IFC4 onwards.</li>
+<li><code>TerrainBuildMethod.TESSELATE_OCC_SHAPE</code>: Constructs the shape in Open Cascade and tesselate it with the help of IfcOpenShell 🐚.</li>
+<li><code>TerrainBuildMethod.NONE</code>: You may also safely skip the terrain part.</li>
+</ul>
+<p>The terrain with a fancy NURBS surface may be challenging to be correctly displayed within some IFC viewers. On the other hand, the tesselation method was followed on the original IfcOpenHouse for IFC2x3, but note that it requires the installation of Open Cascade (<code>pythonocc-core</code> package 📦). In case you want to check out how exactly these methods work, refer to the <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/IfcOpenHouse/ios_utils.py"><code>ios_utils</code></a> module, but be advised they are quite complex!</p>
+<ul>
+<li><p><strong>CURIOUS NOTE</strong> 👉 The tesselation method will create an <a href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_3_0_0/lexical/IfcOpenShell.htm">IfcOpenShell entity</a> with the IfcOpenShell library! 🐚🐚🐚</p></li>
+<li><p><strong>PRO TIP</strong> 👉 If overwhelmed, you may just choose NONE and skip this fancy terrain section, since it’s the least connected with real use cases in the industry.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>terrain_control_points <span class="op">=</span> [  <span class="co"># obtained from the original IfcOpenHouse</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    [( <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.13</span>), ( <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.33</span>, <span class="op">-</span><span class="fl">4.13</span>), (<span class="op">-</span><span class="fl">10.</span>, <span class="fl">0.</span>, <span class="op">-</span><span class="fl">5.13</span>), ( <span class="op">-</span><span class="fl">10.</span>, <span class="fl">4.33</span>, <span class="op">-</span><span class="fl">7.13</span>), ( <span class="op">-</span><span class="fl">10.</span>, <span class="fl">10.</span>, <span class="op">-</span><span class="fl">7.13</span>)],</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    [(<span class="op">-</span><span class="fl">3.33</span>, <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">5.13</span>), (<span class="op">-</span><span class="fl">7.67</span>, <span class="op">-</span><span class="fl">3.67</span>,    <span class="fl">5.</span>), ( <span class="op">-</span><span class="fl">9.</span>, <span class="fl">0.</span>,    <span class="fl">1.</span>), (<span class="op">-</span><span class="fl">7.67</span>, <span class="fl">7.67</span>,    <span class="fl">6.</span>), (<span class="op">-</span><span class="fl">3.33</span>, <span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.13</span>)],</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    [(   <span class="fl">0.</span>, <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">5.53</span>), (   <span class="fl">0.</span>, <span class="op">-</span><span class="fl">3.67</span>,    <span class="fl">3.</span>), (  <span class="fl">0.</span>, <span class="fl">0.</span>,  <span class="op">-</span><span class="fl">12.</span>), (   <span class="fl">0.</span>, <span class="fl">7.67</span>,   <span class="fl">1.5</span>), (   <span class="fl">0.</span>, <span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.13</span>)],</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    [( <span class="fl">3.33</span>, <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">6.13</span>), ( <span class="fl">7.67</span>, <span class="op">-</span><span class="fl">3.67</span>,    <span class="fl">6.</span>), (  <span class="fl">9.</span>, <span class="fl">0.</span>,    <span class="fl">5.</span>), ( <span class="fl">7.67</span>,   <span class="fl">9.</span>,    <span class="fl">7.</span>), ( <span class="fl">3.33</span>, <span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.13</span>)],</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    [(  <span class="fl">10.</span>, <span class="op">-</span><span class="fl">10.</span>, <span class="op">-</span><span class="fl">6.13</span>), (  <span class="fl">10.</span>, <span class="op">-</span><span class="fl">4.33</span>, <span class="op">-</span><span class="fl">5.13</span>), ( <span class="fl">10.</span>, <span class="fl">0.</span>, <span class="op">-</span><span class="fl">4.13</span>), (  <span class="fl">10.</span>, <span class="fl">4.33</span>, <span class="op">-</span><span class="fl">4.13</span>), (  <span class="fl">10.</span>, <span class="fl">10.</span>, <span class="op">-</span><span class="fl">8.13</span>)]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>degree, multiplicity <span class="op">=</span> <span class="dv">4</span>, <span class="dv">5</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> terrain_build_method <span class="op">==</span> TerrainBuildMethod.NATIVE_BSPLINE:</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    terrain_representation <span class="op">=</span> build_native_bspline_terrain(</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, body, terrain_control_points, degree, multiplicity</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> terrain_build_method <span class="op">==</span> TerrainBuildMethod.TESSELATE_OCC_SHAPE:</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    deflection <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    terrain_representation <span class="op">=</span> build_tesselated_occ_terrain(</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, body, terrain_control_points, degree, multiplicity, deflection</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> terrain_build_method <span class="op">!=</span> TerrainBuildMethod.NONE:</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If we have produced an IfcShapeRepresentation, by any of the previous methods, we assign it</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># to the IfcSite and also assign it a style.</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>    ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>site, representation<span class="op">=</span>terrain_representation)</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>    terrain_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>    ios.style.add_surface_style(</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, style<span class="op">=</span>terrain_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>terrain_colour.info</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    ios.style.assign_representation_styles(</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">file</span>, shape_representation<span class="op">=</span>terrain_representation, styles<span class="op">=</span>[terrain_style]</span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>    )<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creation-of-material-layer-sets" class="level2">
+<h2 class="anchored" data-anchor-id="creation-of-material-layer-sets">Creation of material layer sets</h2>
+<p>Firstly, an IfcMaterialLayerSet is added, with a unique brick layer 🧱 consisting of a newly defined brick material for the entire wall thickness. If there were walls consisting of more layers, they could be simply added with the help of <code>material.add_layer</code>. Then, this new layer set is assigned to each wall.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>brick <span class="op">=</span> ios.material.add_material(<span class="bu">file</span>, name<span class="op">=</span><span class="st">'Brick'</span>, category<span class="op">=</span><span class="st">'brick'</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>wall_layerset <span class="op">=</span> ios.material.add_material_set(<span class="bu">file</span>, name<span class="op">=</span><span class="st">'Wall'</span>, set_type<span class="op">=</span><span class="st">'IfcMaterialLayerSet'</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>brick_layer <span class="op">=</span> ios.material.add_layer(<span class="bu">file</span>, layer_set<span class="op">=</span>wall_layerset, material<span class="op">=</span>brick)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>ios.material.edit_layer(<span class="bu">file</span>, layer<span class="op">=</span>brick_layer, attributes<span class="op">=</span>{<span class="st">'LayerThickness'</span>: wall_thickness})</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">#q9: Original IfcOpenHouse used usages. In current IFC, are usages without types a good idea? </span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Do I add usages or types?</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> wall <span class="kw">in</span> [south_wall, north_wall, east_wall, west_wall]:</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    ios.material.assign_material(<span class="bu">file</span>, product<span class="op">=</span>wall, <span class="bu">type</span><span class="op">=</span><span class="st">'IfcMaterialLayerSet'</span>, material<span class="op">=</span>wall_layerset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="creation-of-a-stair-flight" class="level2">
+<h2 class="anchored" data-anchor-id="creation-of-a-stair-flight">Creation of a stair flight</h2>
+<p>Similarly to the previously created entities, a new IfcStairFlight is created 🪜, in this case with an extruded profile representation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>stair_flight_params <span class="op">=</span> {<span class="st">'NumberOfRisers'</span>: <span class="dv">2</span>, <span class="st">'NumberOfTreads'</span>: <span class="dv">2</span>, <span class="st">'RiserHeight'</span>: <span class="fl">0.2</span>, <span class="st">'TreadLength'</span>: <span class="fl">0.25</span>}</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>stair_flight <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcStairFlight'</span>, name<span class="op">=</span><span class="st">'Main entrance stair'</span>, predefined_type<span class="op">=</span><span class="st">'STRAIGHT'</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>stair_flight, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> attr, value <span class="kw">in</span> stair_flight_params.items():</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">setattr</span>(stair_flight, attr, value)  <span class="co"># the entity is monkey-patched with its IFC compliant attributes</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>stair_points <span class="op">=</span> []  <span class="co"># Staircase cross-sectional profile 2D points</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(stair_flight_params[<span class="st">'NumberOfRisers'</span>] <span class="op">+</span> <span class="dv">1</span>):</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    next_step <span class="op">=</span> <span class="dv">0</span> <span class="cf">if</span> step <span class="op">==</span> stair_flight_params[<span class="st">'NumberOfRisers'</span>] <span class="cf">else</span> step <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    stair_points.extend([</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        (step <span class="op">*</span> stair_flight_params[<span class="st">'TreadLength'</span>], step <span class="op">*</span> stair_flight_params[<span class="st">'RiserHeight'</span>]),</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        (next_step <span class="op">*</span> stair_flight_params[<span class="st">'TreadLength'</span>], step <span class="op">*</span> stair_flight_params[<span class="st">'RiserHeight'</span>]),</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    ])</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>stair_flight_curve <span class="op">=</span> <span class="bu">file</span>.create_entity(</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'IfcIndexedPolyCurve'</span>, <span class="bu">file</span>.create_entity(<span class="st">'IfcCartesianPointList2D'</span>, stair_points), <span class="va">None</span>, <span class="va">False</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>stair_flight_profile <span class="op">=</span> <span class="bu">file</span>.create_entity(<span class="st">'IfcArbitraryClosedProfileDef'</span>, <span class="st">'AREA'</span>, <span class="va">None</span>, stair_flight_curve)</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>stair_flight_representation <span class="op">=</span> ios.geometry.add_profile_representation(</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, profile<span class="op">=</span>stair_flight_profile, depth<span class="op">=</span>stair_width</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>stair_flight, representation<span class="op">=</span>stair_flight_representation)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>stair_flight, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>        [footing_size.x <span class="op">/</span> <span class="dv">2</span>, door_horizontal_offset <span class="op">+</span> (door_params[<span class="st">'overall_width'</span>] <span class="op">-</span> stair_width) <span class="op">/</span> <span class="dv">2</span>, <span class="fl">0.</span>],</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>        z_local<span class="op">=</span>[<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]</span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>stair_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>stair_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>stair_colour.info</span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>stair_flight_representation, styles<span class="op">=</span>[stair_style]</span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-house-needs-a-door" class="level2">
+<h2 class="anchored" data-anchor-id="the-house-needs-a-door">The house needs a door…</h2>
+<p>For the door 🚪 creation, we can rely on <code>geometry.add_door_representation</code>, which will produce a high quality representation and is highly customizable.</p>
+<p>Note that when this API function is used outside of Blender, it requires the <code>mathutils</code> package to be installed within the Python environment.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>door <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcDoor'</span>, name<span class="op">=</span><span class="st">'Main door'</span>, predefined_type<span class="op">=</span><span class="st">'DOOR'</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>door, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>door_opening <span class="op">=</span> ios.root.create_entity(<span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcOpeningElement'</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>door_opening_representation <span class="op">=</span> ios.geometry.add_wall_representation(</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, length<span class="op">=</span>door_params[<span class="st">'overall_width'</span>], height<span class="op">=</span>door_params[<span class="st">'overall_height'</span>], </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    thickness<span class="op">=</span>door_params[<span class="st">'overall_width'</span>]</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>door_opening, representation<span class="op">=</span>door_opening_representation</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>door_opening, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        [storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> door_params[<span class="st">'overall_width'</span>] <span class="op">/</span> <span class="dv">2</span> , door_horizontal_offset, <span class="fl">0.</span>]</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>ios.void.add_opening(<span class="bu">file</span>, opening<span class="op">=</span>door_opening, element<span class="op">=</span>east_wall)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>door_representation <span class="op">=</span> ios.geometry.add_door_representation(  <span class="co"># requires mathutils</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, <span class="op">**</span>door_params</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>door, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>        [storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">+</span> wall_thickness <span class="op">/</span> <span class="dv">4</span>, door_horizontal_offset, <span class="fl">0.</span>],</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>        x_local<span class="op">=</span>[<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">0.</span>]  <span class="co"># door is rotated into the east wall</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(<span class="bu">file</span>, product<span class="op">=</span>door, representation<span class="op">=</span>door_representation)</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>ios.void.add_filling(<span class="bu">file</span>, opening<span class="op">=</span>door_opening, element<span class="op">=</span>door)</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>door_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>door_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>door_colour.info</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>door_representation, styles<span class="op">=</span>[door_style]</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="and-some-windows" class="level2">
+<h2 class="anchored" data-anchor-id="and-some-windows">… and some windows</h2>
+<p>Window representations 🪟 rely on the <code>geometry.add_window_representation</code> call, which is also highly customizable. It also depends on the <code>mathutils</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>window_right <span class="op">=</span> ios.root.create_entity(</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWindow'</span>, name<span class="op">=</span><span class="st">'Right window'</span>, predefined_type<span class="op">=</span><span class="st">'WINDOW'</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>window_right.PartitioningType <span class="op">=</span> single_window_params[<span class="st">'partition_type'</span>]  <span class="co">#q6: couldn't this fit into the previous call?</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>window_right_representation <span class="op">=</span> ios.geometry.add_window_representation(  <span class="co"># requires mathutils</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, <span class="op">**</span>single_window_params</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>window_right, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_right, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>        [right_window_horizontal_offset, <span class="op">-</span>wall_thickness <span class="op">/</span> <span class="dv">3</span>, window_base_height]</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_right, representation<span class="op">=</span>window_right_representation</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>ios.void.add_filling(<span class="bu">file</span>, opening<span class="op">=</span>south_opening, element<span class="op">=</span>window_right)</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>window_west <span class="op">=</span> ios.root.create_entity(</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWindow'</span>, name<span class="op">=</span><span class="st">'West window'</span>, predefined_type<span class="op">=</span><span class="st">'WINDOW'</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>window_west.PartitioningType <span class="op">=</span> single_window_params[<span class="st">'partition_type'</span>]</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>window_west_representation <span class="op">=</span> ios.geometry.add_window_representation(</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, <span class="op">**</span>single_window_params</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>window_west, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_west, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">-</span>storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness,</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>            (</span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>                <span class="op">+</span> single_window_params[<span class="st">'overall_width'</span>] <span class="op">-</span> wall_thickness <span class="op">/</span> <span class="dv">3</span> </span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>                <span class="op">+</span> triple_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningOffset'</span>] </span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>                <span class="op">+</span> triple_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningDepth'</span>]</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>            ), </span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>            window_base_height</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>        ], x_local<span class="op">=</span>[<span class="fl">0.</span>, <span class="op">-</span><span class="fl">1.</span>, <span class="fl">0.</span>]</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_west, representation<span class="op">=</span>window_west_representation</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>ios.void.add_filling(<span class="bu">file</span>, opening<span class="op">=</span>west_opening_copy, element<span class="op">=</span>window_west)</span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>window_left <span class="op">=</span> ios.root.create_entity(</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, ifc_class<span class="op">=</span><span class="st">'IfcWindow'</span>, name<span class="op">=</span><span class="st">'Left Window'</span>, predefined_type<span class="op">=</span><span class="st">'WINDOW'</span></span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>window_left.PartitioningType <span class="op">=</span> triple_window_params[<span class="st">'partition_type'</span>]</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>window_left_representation <span class="op">=</span> ios.geometry.add_window_representation(</span>
+<span id="cb28-50"><a href="#cb28-50" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, context<span class="op">=</span>body, <span class="op">**</span>triple_window_params</span>
+<span id="cb28-51"><a href="#cb28-51" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-52"><a href="#cb28-52" aria-hidden="true" tabindex="-1"></a>ios.spatial.assign_container(<span class="bu">file</span>, product<span class="op">=</span>window_left, relating_structure<span class="op">=</span>storey)</span>
+<span id="cb28-53"><a href="#cb28-53" aria-hidden="true" tabindex="-1"></a>ios.geometry.edit_object_placement(</span>
+<span id="cb28-54"><a href="#cb28-54" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_left, matrix<span class="op">=</span>placement_matrix(</span>
+<span id="cb28-55"><a href="#cb28-55" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb28-56"><a href="#cb28-56" aria-hidden="true" tabindex="-1"></a>            (</span>
+<span id="cb28-57"><a href="#cb28-57" aria-hidden="true" tabindex="-1"></a>                <span class="op">-</span>storey_size.x <span class="op">/</span> <span class="dv">2</span> <span class="op">-</span> wall_thickness</span>
+<span id="cb28-58"><a href="#cb28-58" aria-hidden="true" tabindex="-1"></a>                <span class="op">+</span> single_window_params[<span class="st">'lining_properties'</span>][<span class="st">'LiningOffset'</span>]</span>
+<span id="cb28-59"><a href="#cb28-59" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="cb28-60"><a href="#cb28-60" aria-hidden="true" tabindex="-1"></a>            <span class="op">-</span>wall_thickness <span class="op">/</span> <span class="dv">3</span>,</span>
+<span id="cb28-61"><a href="#cb28-61" aria-hidden="true" tabindex="-1"></a>            window_base_height]</span>
+<span id="cb28-62"><a href="#cb28-62" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-63"><a href="#cb28-63" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-64"><a href="#cb28-64" aria-hidden="true" tabindex="-1"></a>ios.geometry.assign_representation(</span>
+<span id="cb28-65"><a href="#cb28-65" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, product<span class="op">=</span>window_left, representation<span class="op">=</span>window_left_representation</span>
+<span id="cb28-66"><a href="#cb28-66" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-67"><a href="#cb28-67" aria-hidden="true" tabindex="-1"></a>ios.void.add_filling(<span class="bu">file</span>, opening<span class="op">=</span>west_opening, element<span class="op">=</span>window_left)</span>
+<span id="cb28-68"><a href="#cb28-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-69"><a href="#cb28-69" aria-hidden="true" tabindex="-1"></a>window_style <span class="op">=</span> ios.style.add_style(<span class="bu">file</span>)</span>
+<span id="cb28-70"><a href="#cb28-70" aria-hidden="true" tabindex="-1"></a>ios.style.add_surface_style(</span>
+<span id="cb28-71"><a href="#cb28-71" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, style<span class="op">=</span>window_style, ifc_class<span class="op">=</span><span class="st">'IfcSurfaceStyleShading'</span>, attributes<span class="op">=</span>window_colour.info</span>
+<span id="cb28-72"><a href="#cb28-72" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-73"><a href="#cb28-73" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles( <span class="co">#q10: Will it be possible to assign different styles to the panel and the lining?</span></span>
+<span id="cb28-74"><a href="#cb28-74" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>window_right_representation, styles<span class="op">=</span>[window_style]</span>
+<span id="cb28-75"><a href="#cb28-75" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-76"><a href="#cb28-76" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb28-77"><a href="#cb28-77" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>window_west_representation, styles<span class="op">=</span>[window_style]</span>
+<span id="cb28-78"><a href="#cb28-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-79"><a href="#cb28-79" aria-hidden="true" tabindex="-1"></a>ios.style.assign_representation_styles(</span>
+<span id="cb28-80"><a href="#cb28-80" aria-hidden="true" tabindex="-1"></a>    <span class="bu">file</span>, shape_representation<span class="op">=</span>window_left_representation, styles<span class="op">=</span>[window_style]</span>
+<span id="cb28-81"><a href="#cb28-81" aria-hidden="true" tabindex="-1"></a>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-the-validity-of-our-file" class="level2">
+<h2 class="anchored" data-anchor-id="checking-the-validity-of-our-file">Checking the validity of our file</h2>
+<p>After all the previous steps, we have programmatically defined an IFC file. But, is it valid? ✅ have we messed up at some point? IfcOpenShell 🐚 provides the <code>validate</code> method to validate a certain file against its corresponding schema:</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>json_logger <span class="op">=</span> ifcopenshell.validate.json_logger()</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>ifcopenshell.validate.validate(<span class="bu">file</span>, json_logger)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>json_logger.statements[:<span class="bu">min</span>(<span class="dv">3</span>, <span class="bu">len</span>(json_logger.statements))]  <span class="co"># Showing only first 3 here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>[]</code></pre>
+</div>
+</div>
+<p>Let’s check how many different validation issues we get by converting to a Python 🐍 set. If everything is fine, the set should be empty:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span>([issue[<span class="st">'attribute'</span>] <span class="cf">for</span> issue <span class="kw">in</span> json_logger.statements])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>set()</code></pre>
+</div>
+</div>
+</section>
+<section id="visualization-with-ifc.js" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-with-ifc.js">Visualization with IFC.js</h2>
+<p>It is worth noting that a Jupyter 🪐 Notebook 📒 runs in the browser 🛜, and is therefore subject to the laws of web development. Moreover, a couple of handy “magic methods” <code>%%html</code> and <code>%%js</code> can be placed at the start of a code cell to run HTML or JavaScript. Thanks to it, we can create a new <code>div</code> and use a simple prebundled script using <a href="https://ifcjs.github.io/info/">IFC.js</a> to render our brand new IFC on it. You may have a look at the simple JS script <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/viz/nb_viz.js">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode html code-with-copy"><code class="sourceCode html"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">"info-panel hidden"</span> <span class="er">id</span><span class="ot">=</span><span class="st">"id-info-div"</span><span class="kw">&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;p</span> <span class="er">class</span><span class="ot">=</span><span class="st">"info"</span> <span class="er">id</span><span class="ot">=</span><span class="st">"id-info-p"</span><span class="kw">&gt;&lt;/p&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">id</span><span class="ot">=</span><span class="st">"ifcjs-container"</span><span class="kw">&gt;&lt;/div&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div class="info-panel hidden" id="id-info-div">
+    <p class="info" id="id-info-p"></p>
+</div>
+<div id="ifcjs-container"></div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co">//# Run this cell to load the IfcOpenShell file with IFC.js in the div above</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">//# Rerun cells as needed and run this cell again to reload viz</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadIfcFromJupyter</span>(out){</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> ifcStr <span class="op">=</span> out<span class="op">.</span><span class="at">content</span><span class="op">.</span><span class="at">data</span>[<span class="st">"text/plain"</span>]<span class="op">;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">loadIfc</span>(ifcStr<span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> callbacks <span class="op">=</span> {<span class="dt">iopub</span><span class="op">:</span> {<span class="dt">output</span><span class="op">:</span> loadIfcFromJupyter}}<span class="op">;</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>IPython<span class="op">.</span><span class="at">notebook</span><span class="op">.</span><span class="at">kernel</span><span class="op">.</span><span class="fu">execute</span>(<span class="st">"file.to_string()"</span><span class="op">,</span> callbacks<span class="op">,</span> {<span class="dt">silent</span><span class="op">:</span> <span class="kw">false</span>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/javascript">
+//# Run this cell to load the IfcOpenShell file with IFC.js in the div above
+//# Rerun cells as needed and run this cell again to reload viz
+
+async function loadIfcFromJupyter(out){
+    let ifcStr = out.content.data["text/plain"];
+    loadIfc(ifcStr, true);
+}
+
+let callbacks = {iopub: {output: loadIfcFromJupyter}};
+IPython.notebook.kernel.execute("file.to_string()", callbacks, {silent: false});
+
+</script>
+</div>
+</div>
+<p>If browsing through the website version, the preview has been already shown at the top of the page. Do you fancy trying with a 60º roof? or taller walls? Check out <a href="https://github.com/cvillagrasa/IfcOpenHouse/blob/master/nbs/00_generation.ipynb">the notebook version</a> in order to be able to produce those modified versions by yourself 😉.</p>
+<p>&nbsp;</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./static/generation_samples.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">IfcOpenHouse generation samples</figcaption>
+</figure>
+</div>
+</section>
+<section id="saving-our-ifc-file" class="level2">
+<h2 class="anchored" data-anchor-id="saving-our-ifc-file">Saving our IFC file</h2>
+<p>Finally, we can dump the programmatically generated file into disk 🚀:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ifc_path <span class="op">=</span> Path(<span class="st">'..'</span>) <span class="op">/</span> <span class="st">'ifc'</span> <span class="op">/</span> <span class="st">'IfcOpenHouse.ifc'</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="bu">file</span>.write(ifc_path)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And that was it! we have programmatically and procedurally generated a simple house in IFC. What are you thinking to build next? 😎</p>
+</section>
+<section id="known-missing-features" class="level2">
+<h2 class="anchored" data-anchor-id="known-missing-features">Known missing features</h2>
+<p>If you feel something is missing or can be improve, kindly <a href="https://github.com/cvillagrasa/IfcOpenHouse/issues/new">file an issue</a>. This is a list of known missing features at the moment:</p>
+<ul>
+<li>Using IFC Types</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/cvillagrasa\.github\.io\/IfcOpenHouse");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          // default icon
+          link.classList.add("external");
+      }
+    }
+});
+</script>
+</div> <!-- /content -->
+<script src="https://cdn.jsdelivr.net/gh/cvillagrasa/IfcOpenHouse@latest/viz/bundle_quarto.js">
+
+</body>
+
+</html></script><script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
